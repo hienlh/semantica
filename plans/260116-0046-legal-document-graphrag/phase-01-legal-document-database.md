@@ -8,7 +8,9 @@
 
 ## Overview
 
-Create PostgreSQL database schema for hierarchical Vietnamese legal document storage. Schema mirrors 6-level structure from Phase 00 scraper output: Document > Chapter > Section > Article > Clause > Point. Each level links to corresponding KG node via `kg_node_id`.
+Create **SQLite** database for hierarchical Vietnamese legal document storage. Schema mirrors 6-level structure from Phase 00 scraper output: Document > Chapter > Section > Article > Clause > Point. Each level links to corresponding KG node via `kg_node_id`.
+
+**Why SQLite:** Zero-config, file-based, perfect for development & single-user RAG applications.
 
 **Input:** `LegalDocument` from Phase 00 web scraper (`semantica.legal.scraper.base`)
 
@@ -32,10 +34,10 @@ Create PostgreSQL database schema for hierarchical Vietnamese legal document sto
 
 ### Non-Functional
 
-- NFR-01: PostgreSQL 14+ with UUID support
-- NFR-02: Indexes on document_id, article_number, effective_date
-- NFR-03: JSONB column for flexible metadata storage
-- NFR-04: Alembic migrations for schema versioning
+- NFR-01: SQLite 3.x (file-based, zero-config)
+- NFR-02: Indexes on so_hieu, article_number, kg_node_id
+- NFR-03: JSON column for flexible metadata storage (SQLite JSON1)
+- NFR-04: Simple migration via SQLAlchemy create_all()
 
 ## Architecture
 
@@ -47,7 +49,7 @@ Create PostgreSQL database schema for hierarchical Vietnamese legal document sto
 └───────────────────────────────┬─────────────────────────────────────────┘
                                 ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                         PostgreSQL Database                              │
+│                    SQLite Database (legal_docs.db)                       │
 ├─────────────────────────────────────────────────────────────────────────┤
 │  legal_documents                                                         │
 │  ├── id (UUID PK)                                                        │
@@ -108,19 +110,21 @@ Create PostgreSQL database schema for hierarchical Vietnamese legal document sto
 Create `semantica/legal/models.py`:
 
 ```python
-from sqlalchemy import Column, String, Text, Date, DateTime, Integer, Float, ForeignKey, JSON
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, String, Text, Date, DateTime, Integer, Float, ForeignKey, JSON, Index
 from sqlalchemy.orm import relationship, declarative_base
 from datetime import datetime
 import uuid
 
 Base = declarative_base()
 
+def generate_uuid():
+    return str(uuid.uuid4())
+
 class LegalDocumentModel(Base):
     """Maps to Phase 00: LegalDocument"""
     __tablename__ = 'legal_documents'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=generate_uuid)
     so_hieu = Column(String(100), nullable=False, index=True)  # "59/2020/QH14"
     title = Column(String(500), nullable=False)
     loai_van_ban = Column(String(50))  # 'Luật', 'Nghị định', 'Thông tư'
@@ -129,11 +133,11 @@ class LegalDocumentModel(Base):
     ngay_ban_hanh = Column(Date)
     ngay_hieu_luc = Column(Date)
     tinh_trang = Column(String(100))
-    full_hierarchy = Column(JSON)  # Full parsed tree as JSONB
+    full_hierarchy = Column(JSON)  # Full parsed tree
     raw_text = Column(Text)
-    kg_node_id = Column(UUID(as_uuid=True), index=True)
+    kg_node_id = Column(String(36), index=True)  # Link to KG
     source_url = Column(Text)
-    metadata = Column(JSON)
+    metadata_ = Column("metadata", JSON)  # renamed to avoid SQLAlchemy conflict
     created_at = Column(DateTime, default=datetime.utcnow)
 
     chapters = relationship("LegalChapterModel", back_populates="document", cascade="all, delete-orphan")
@@ -143,12 +147,12 @@ class LegalChapterModel(Base):
     """Maps to Phase 00: LegalChapter"""
     __tablename__ = 'legal_chapters'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    document_id = Column(UUID(as_uuid=True), ForeignKey('legal_documents.id'), nullable=False)
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    document_id = Column(String(36), ForeignKey('legal_documents.id'), nullable=False)
     chapter_number = Column(String(20), nullable=False)  # Roman: "I", "II", "III"
     title = Column(String(500))
     raw_text = Column(Text)
-    kg_node_id = Column(UUID(as_uuid=True), index=True)
+    kg_node_id = Column(String(36), index=True)
     position = Column(Integer)
 
     document = relationship("LegalDocumentModel", back_populates="chapters")
@@ -159,12 +163,12 @@ class LegalSectionModel(Base):
     """Maps to Phase 00: LegalSection (Mục)"""
     __tablename__ = 'legal_sections'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    chapter_id = Column(UUID(as_uuid=True), ForeignKey('legal_chapters.id'), nullable=False)
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    chapter_id = Column(String(36), ForeignKey('legal_chapters.id'), nullable=False)
     section_number = Column(Integer, nullable=False)
     title = Column(String(500))
     raw_text = Column(Text)
-    kg_node_id = Column(UUID(as_uuid=True), index=True)
+    kg_node_id = Column(String(36), index=True)
     position = Column(Integer)
 
     chapter = relationship("LegalChapterModel", back_populates="sections")
@@ -174,15 +178,15 @@ class LegalArticleModel(Base):
     """Maps to Phase 00: LegalArticle"""
     __tablename__ = 'legal_articles'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    document_id = Column(UUID(as_uuid=True), ForeignKey('legal_documents.id'))
-    chapter_id = Column(UUID(as_uuid=True), ForeignKey('legal_chapters.id'), nullable=True)
-    section_id = Column(UUID(as_uuid=True), ForeignKey('legal_sections.id'), nullable=True)
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    document_id = Column(String(36), ForeignKey('legal_documents.id'))
+    chapter_id = Column(String(36), ForeignKey('legal_chapters.id'), nullable=True)
+    section_id = Column(String(36), ForeignKey('legal_sections.id'), nullable=True)
     article_number = Column(Integer, nullable=False, index=True)
     title = Column(String(500))
     content = Column(Text)
     raw_text = Column(Text)
-    kg_node_id = Column(UUID(as_uuid=True), index=True)
+    kg_node_id = Column(String(36), index=True)
     position = Column(Integer)
 
     document = relationship("LegalDocumentModel", back_populates="articles")
@@ -194,12 +198,12 @@ class LegalClauseModel(Base):
     """Maps to Phase 00: LegalClause"""
     __tablename__ = 'legal_clauses'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    article_id = Column(UUID(as_uuid=True), ForeignKey('legal_articles.id'), nullable=False)
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    article_id = Column(String(36), ForeignKey('legal_articles.id'), nullable=False)
     clause_number = Column(Integer, nullable=False)
     content = Column(Text, nullable=False)
     raw_text = Column(Text)
-    kg_node_id = Column(UUID(as_uuid=True), index=True)
+    kg_node_id = Column(String(36), index=True)
     position = Column(Integer)
 
     article = relationship("LegalArticleModel", back_populates="clauses")
@@ -209,12 +213,12 @@ class LegalPointModel(Base):
     """Maps to Phase 00: LegalPoint"""
     __tablename__ = 'legal_points'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    clause_id = Column(UUID(as_uuid=True), ForeignKey('legal_clauses.id'), nullable=False)
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    clause_id = Column(String(36), ForeignKey('legal_clauses.id'), nullable=False)
     point_letter = Column(String(5), nullable=False)  # "a", "b", "đ"
     content = Column(Text, nullable=False)
     raw_text = Column(Text)
-    kg_node_id = Column(UUID(as_uuid=True), index=True)
+    kg_node_id = Column(String(36), index=True)
     position = Column(Integer)
 
     clause = relationship("LegalClauseModel", back_populates="points")
@@ -223,45 +227,52 @@ class LegalCrossReferenceModel(Base):
     """Store detected cross-references between articles"""
     __tablename__ = 'legal_cross_references'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    source_article_id = Column(UUID(as_uuid=True), ForeignKey('legal_articles.id'))
-    target_article_id = Column(UUID(as_uuid=True), ForeignKey('legal_articles.id'), nullable=True)
-    target_document_id = Column(UUID(as_uuid=True), ForeignKey('legal_documents.id'), nullable=True)
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    source_article_id = Column(String(36), ForeignKey('legal_articles.id'))
+    target_article_id = Column(String(36), ForeignKey('legal_articles.id'), nullable=True)
+    target_document_id = Column(String(36), ForeignKey('legal_documents.id'), nullable=True)
     reference_text = Column(Text)  # "theo Điều 5 Luật 20/2014"
     reference_type = Column(String(50))  # 'references', 'amends', 'supersedes'
     confidence = Column(Float, default=1.0)
 ```
 
-### Step 2: Create Alembic Migration (1h)
+### Step 2: Database Initialization (0.5h)
 
-```bash
-# Initialize alembic in semantica/legal/
-alembic init alembic
-# Create migration
-alembic revision --autogenerate -m "create_legal_document_tables"
+```python
+# Simple SQLite setup - no Alembic needed
+from semantica.legal.models import Base
+from sqlalchemy import create_engine
+
+# Create database file
+engine = create_engine("sqlite:///data/legal_docs.db")
+Base.metadata.create_all(engine)
 ```
+
+Database file location: `data/legal_docs.db` (gitignored)
 
 ### Step 3: Create Database Manager (2h)
 
 Create `semantica/legal/db_manager.py`:
 
 ```python
-from typing import Optional, List
-from uuid import UUID
+from typing import Optional
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker
 
 from semantica.legal.scraper.base import LegalDocument as ScrapedDocument
 from semantica.legal.models import (
-    LegalDocumentModel, LegalChapterModel, LegalSectionModel,
+    Base, LegalDocumentModel, LegalChapterModel, LegalSectionModel,
     LegalArticleModel, LegalClauseModel, LegalPointModel
 )
 
-class LegalDocumentDB:
-    """Database manager for legal document storage."""
+DEFAULT_DB_PATH = "data/legal_docs.db"
 
-    def __init__(self, connection_string: str):
-        self.engine = create_engine(connection_string)
+class LegalDocumentDB:
+    """SQLite database manager for legal document storage."""
+
+    def __init__(self, db_path: str = DEFAULT_DB_PATH):
+        self.engine = create_engine(f"sqlite:///{db_path}")
+        Base.metadata.create_all(self.engine)  # Auto-create tables
         self.Session = sessionmaker(bind=self.engine)
 
     def store_from_scraper(self, scraped_doc: ScrapedDocument) -> UUID:
@@ -334,9 +345,8 @@ class LegalCitationFormatter:
 ## Todo List
 
 - [ ] Create SQLAlchemy models in `semantica/legal/models.py`
-- [ ] Set up Alembic migrations
-- [ ] Implement `LegalDocumentDB.store_from_scraper()` for Phase 00 integration
-- [ ] Add indexes on so_hieu, article_number, kg_node_id
+- [ ] Implement `LegalDocumentDB` with auto-create tables
+- [ ] Implement `store_from_scraper()` for Phase 00 integration
 - [ ] Implement `LegalCitationFormatter`
 - [ ] Write unit tests for CRUD operations
 - [ ] Test import from Phase 00 scraped data (10 documents, 619 articles)
@@ -354,9 +364,9 @@ class LegalCitationFormatter:
 
 | Risk | Probability | Impact | Mitigation |
 |------|-------------|--------|------------|
-| Schema changes during dev | Medium | Medium | Use Alembic migrations |
-| JSONB query performance | Low | Medium | Add GIN index on full_hierarchy |
-| UUID generation conflicts | Very Low | High | Use uuid4() with proper seeding |
+| Schema changes during dev | Medium | Low | Delete DB file, re-run create_all() |
+| Large document JSON size | Low | Low | SQLite handles JSON well |
+| Concurrent writes | Low | Medium | Single-user RAG app, not an issue |
 
 ## Security Considerations
 
