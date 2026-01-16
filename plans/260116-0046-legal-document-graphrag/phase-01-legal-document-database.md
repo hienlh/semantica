@@ -2,12 +2,15 @@
 
 ## Context Links
 
+- [Phase 00: Web Scraper](./phase-00-web-scraper.md) ← Input source
 - [Research: VN Legal Structure](./research/researcher-01-vn-legal-structure.md)
 - [Main Plan](./plan.md)
 
 ## Overview
 
-Create PostgreSQL database schema for hierarchical Vietnamese legal document storage. Schema mirrors 5-level structure: Document > Chapter > Section > Article > Clause > Point. Each level links to corresponding KG node via `kg_node_id`.
+Create PostgreSQL database schema for hierarchical Vietnamese legal document storage. Schema mirrors 6-level structure from Phase 00 scraper output: Document > Chapter > Section > Article > Clause > Point. Each level links to corresponding KG node via `kg_node_id`.
+
+**Input:** `LegalDocument` from Phase 00 web scraper (`semantica.legal.scraper.base`)
 
 ## Key Insights (from Research)
 
@@ -38,36 +41,52 @@ Create PostgreSQL database schema for hierarchical Vietnamese legal document sto
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
+│                      Phase 00 Web Scraper Output                         │
+│  LegalDocument → LegalChapter → LegalSection → LegalArticle             │
+│                                               → LegalClause → LegalPoint │
+└───────────────────────────────┬─────────────────────────────────────────┘
+                                ↓
+┌─────────────────────────────────────────────────────────────────────────┐
 │                         PostgreSQL Database                              │
 ├─────────────────────────────────────────────────────────────────────────┤
-│  documents                                                               │
+│  legal_documents                                                         │
 │  ├── id (UUID PK)                                                        │
-│  ├── title, type, issuing_authority, effective_date, document_number    │
+│  ├── so_hieu (VARCHAR) ← document number "59/2020/QH14"                 │
+│  ├── title, loai_van_ban, co_quan_ban_hanh                              │
+│  ├── ngay_ban_hanh, ngay_hieu_luc, tinh_trang                           │
 │  ├── full_hierarchy (JSONB) ─────────────────────────────────────────────┼──→ Full parsed tree
+│  ├── raw_text (TEXT)                                                     │
 │  ├── kg_node_id (UUID) ──────────────────────────────────────────────────┼──→ Links to KG
-│  └── source_file, created_at                                             │
+│  └── source_url, created_at                                              │
 ├─────────────────────────────────────────────────────────────────────────┤
-│  chapters                                                                │
-│  ├── id (UUID PK), document_id (FK), chapter_number, title              │
+│  legal_chapters                                                          │
+│  ├── id (UUID PK), document_id (FK)                                      │
+│  ├── chapter_number (VARCHAR) ← Roman: "I", "II", "III"                  │
+│  ├── title, raw_text                                                     │
 │  ├── kg_node_id (UUID), position                                         │
 ├─────────────────────────────────────────────────────────────────────────┤
-│  sections (Mục - optional layer)                                         │
-│  ├── id (UUID PK), chapter_id (FK), section_number, title               │
+│  legal_sections (Mục)                                                    │
+│  ├── id (UUID PK), chapter_id (FK)                                       │
+│  ├── section_number (INT), title, raw_text                              │
 │  ├── kg_node_id (UUID), position                                         │
 ├─────────────────────────────────────────────────────────────────────────┤
-│  articles                                                                │
-│  ├── id (UUID PK), chapter_id/section_id (FK), article_number, title    │
-│  ├── full_text, kg_node_id (UUID), position                              │
-├─────────────────────────────────────────────────────────────────────────┤
-│  clauses                                                                 │
-│  ├── id (UUID PK), article_id (FK), clause_number, text                 │
+│  legal_articles                                                          │
+│  ├── id (UUID PK), chapter_id (FK), section_id (FK, nullable)           │
+│  ├── article_number (INT), title, content, raw_text                     │
 │  ├── kg_node_id (UUID), position                                         │
 ├─────────────────────────────────────────────────────────────────────────┤
-│  points                                                                  │
-│  ├── id (UUID PK), clause_id (FK), point_letter, text                   │
+│  legal_clauses                                                           │
+│  ├── id (UUID PK), article_id (FK)                                       │
+│  ├── clause_number (INT), content, raw_text                             │
 │  ├── kg_node_id (UUID), position                                         │
 ├─────────────────────────────────────────────────────────────────────────┤
-│  cross_references (stores detected "theo Điều X Luật Y" links)           │
+│  legal_points                                                            │
+│  ├── id (UUID PK), clause_id (FK)                                        │
+│  ├── point_letter (VARCHAR) ← "a", "b", "đ"                             │
+│  ├── content, raw_text                                                   │
+│  ├── kg_node_id (UUID), position                                         │
+├─────────────────────────────────────────────────────────────────────────┤
+│  legal_cross_references (detected "theo Điều X Luật Y" links)            │
 │  ├── id (UUID PK), source_article_id, target_article_id                 │
 │  ├── reference_text, reference_type, confidence                         │
 └─────────────────────────────────────────────────────────────────────────┘
@@ -75,9 +94,12 @@ Create PostgreSQL database schema for hierarchical Vietnamese legal document sto
 
 ## Related Code Files
 
-- `/Users/hienlh/Projects/semantica/semantica/kg/provenance_tracker.py` - Provenance pattern
-- `/Users/hienlh/Projects/semantica/semantica/ingest/db_ingestor.py` - DB ingestion
-- `/Users/hienlh/Projects/semantica/semantica/graph_store/graph_store.py` - Graph store interface
+### Phase 00 Input (Data Classes)
+- `semantica/legal/scraper/base.py` - LegalDocument, LegalChapter, LegalSection, LegalArticle, LegalClause, LegalPoint
+
+### Reference Implementation
+- `semantica/kg/provenance_tracker.py` - Provenance pattern
+- `semantica/ingest/db_ingestor.py` - DB ingestion pattern
 
 ## Implementation Steps
 
@@ -86,88 +108,126 @@ Create PostgreSQL database schema for hierarchical Vietnamese legal document sto
 Create `semantica/legal/models.py`:
 
 ```python
-from sqlalchemy import Column, String, Text, Date, Integer, ForeignKey, JSON
+from sqlalchemy import Column, String, Text, Date, DateTime, Integer, Float, ForeignKey, JSON
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, declarative_base
+from datetime import datetime
 import uuid
 
 Base = declarative_base()
 
-class LegalDocument(Base):
+class LegalDocumentModel(Base):
+    """Maps to Phase 00: LegalDocument"""
     __tablename__ = 'legal_documents'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    so_hieu = Column(String(100), nullable=False, index=True)  # "59/2020/QH14"
     title = Column(String(500), nullable=False)
-    document_type = Column(String(50))  # 'law', 'decree', 'decision', 'circular'
-    document_number = Column(String(100))  # e.g., "20/2014/QH13"
-    issuing_authority = Column(String(200))
-    effective_date = Column(Date)
+    loai_van_ban = Column(String(50))  # 'Luật', 'Nghị định', 'Thông tư'
+    co_quan_ban_hanh = Column(String(200))
+    nguoi_ky = Column(String(200))
+    ngay_ban_hanh = Column(Date)
+    ngay_hieu_luc = Column(Date)
+    tinh_trang = Column(String(100))
     full_hierarchy = Column(JSON)  # Full parsed tree as JSONB
-    kg_node_id = Column(UUID(as_uuid=True))  # Link to KG
-    source_file = Column(Text)
+    raw_text = Column(Text)
+    kg_node_id = Column(UUID(as_uuid=True), index=True)
+    source_url = Column(Text)
+    metadata = Column(JSON)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
-    chapters = relationship("Chapter", back_populates="document", cascade="all, delete-orphan")
+    chapters = relationship("LegalChapterModel", back_populates="document", cascade="all, delete-orphan")
+    articles = relationship("LegalArticleModel", back_populates="document", cascade="all, delete-orphan")
 
-class Chapter(Base):
+class LegalChapterModel(Base):
+    """Maps to Phase 00: LegalChapter"""
     __tablename__ = 'legal_chapters'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    document_id = Column(UUID(as_uuid=True), ForeignKey('legal_documents.id'))
-    chapter_number = Column(Integer, nullable=False)
+    document_id = Column(UUID(as_uuid=True), ForeignKey('legal_documents.id'), nullable=False)
+    chapter_number = Column(String(20), nullable=False)  # Roman: "I", "II", "III"
     title = Column(String(500))
-    kg_node_id = Column(UUID(as_uuid=True))
+    raw_text = Column(Text)
+    kg_node_id = Column(UUID(as_uuid=True), index=True)
     position = Column(Integer)
 
-    document = relationship("LegalDocument", back_populates="chapters")
-    articles = relationship("Article", back_populates="chapter", cascade="all, delete-orphan")
+    document = relationship("LegalDocumentModel", back_populates="chapters")
+    sections = relationship("LegalSectionModel", back_populates="chapter", cascade="all, delete-orphan")
+    articles = relationship("LegalArticleModel", back_populates="chapter", cascade="all, delete-orphan")
 
-class Article(Base):
+class LegalSectionModel(Base):
+    """Maps to Phase 00: LegalSection (Mục)"""
+    __tablename__ = 'legal_sections'
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    chapter_id = Column(UUID(as_uuid=True), ForeignKey('legal_chapters.id'), nullable=False)
+    section_number = Column(Integer, nullable=False)
+    title = Column(String(500))
+    raw_text = Column(Text)
+    kg_node_id = Column(UUID(as_uuid=True), index=True)
+    position = Column(Integer)
+
+    chapter = relationship("LegalChapterModel", back_populates="sections")
+    articles = relationship("LegalArticleModel", back_populates="section", cascade="all, delete-orphan")
+
+class LegalArticleModel(Base):
+    """Maps to Phase 00: LegalArticle"""
     __tablename__ = 'legal_articles'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    chapter_id = Column(UUID(as_uuid=True), ForeignKey('legal_chapters.id'))
-    article_number = Column(Integer, nullable=False)
+    document_id = Column(UUID(as_uuid=True), ForeignKey('legal_documents.id'))
+    chapter_id = Column(UUID(as_uuid=True), ForeignKey('legal_chapters.id'), nullable=True)
+    section_id = Column(UUID(as_uuid=True), ForeignKey('legal_sections.id'), nullable=True)
+    article_number = Column(Integer, nullable=False, index=True)
     title = Column(String(500))
-    full_text = Column(Text)
-    kg_node_id = Column(UUID(as_uuid=True))
+    content = Column(Text)
+    raw_text = Column(Text)
+    kg_node_id = Column(UUID(as_uuid=True), index=True)
     position = Column(Integer)
 
-    chapter = relationship("Chapter", back_populates="articles")
-    clauses = relationship("Clause", back_populates="article", cascade="all, delete-orphan")
+    document = relationship("LegalDocumentModel", back_populates="articles")
+    chapter = relationship("LegalChapterModel", back_populates="articles")
+    section = relationship("LegalSectionModel", back_populates="articles")
+    clauses = relationship("LegalClauseModel", back_populates="article", cascade="all, delete-orphan")
 
-class Clause(Base):
+class LegalClauseModel(Base):
+    """Maps to Phase 00: LegalClause"""
     __tablename__ = 'legal_clauses'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    article_id = Column(UUID(as_uuid=True), ForeignKey('legal_articles.id'))
+    article_id = Column(UUID(as_uuid=True), ForeignKey('legal_articles.id'), nullable=False)
     clause_number = Column(Integer, nullable=False)
-    text = Column(Text, nullable=False)
-    kg_node_id = Column(UUID(as_uuid=True))
+    content = Column(Text, nullable=False)
+    raw_text = Column(Text)
+    kg_node_id = Column(UUID(as_uuid=True), index=True)
     position = Column(Integer)
 
-    article = relationship("Article", back_populates="clauses")
-    points = relationship("Point", back_populates="clause", cascade="all, delete-orphan")
+    article = relationship("LegalArticleModel", back_populates="clauses")
+    points = relationship("LegalPointModel", back_populates="clause", cascade="all, delete-orphan")
 
-class Point(Base):
+class LegalPointModel(Base):
+    """Maps to Phase 00: LegalPoint"""
     __tablename__ = 'legal_points'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    clause_id = Column(UUID(as_uuid=True), ForeignKey('legal_clauses.id'))
-    point_letter = Column(String(1), nullable=False)
-    text = Column(Text, nullable=False)
-    kg_node_id = Column(UUID(as_uuid=True))
+    clause_id = Column(UUID(as_uuid=True), ForeignKey('legal_clauses.id'), nullable=False)
+    point_letter = Column(String(5), nullable=False)  # "a", "b", "đ"
+    content = Column(Text, nullable=False)
+    raw_text = Column(Text)
+    kg_node_id = Column(UUID(as_uuid=True), index=True)
     position = Column(Integer)
 
-    clause = relationship("Clause", back_populates="points")
+    clause = relationship("LegalClauseModel", back_populates="points")
 
-class CrossReference(Base):
+class LegalCrossReferenceModel(Base):
+    """Store detected cross-references between articles"""
     __tablename__ = 'legal_cross_references'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     source_article_id = Column(UUID(as_uuid=True), ForeignKey('legal_articles.id'))
     target_article_id = Column(UUID(as_uuid=True), ForeignKey('legal_articles.id'), nullable=True)
     target_document_id = Column(UUID(as_uuid=True), ForeignKey('legal_documents.id'), nullable=True)
-    reference_text = Column(Text)  # Original text: "theo Điều 5 Luật 20/2014"
+    reference_text = Column(Text)  # "theo Điều 5 Luật 20/2014"
     reference_type = Column(String(50))  # 'references', 'amends', 'supersedes'
     confidence = Column(Float, default=1.0)
 ```
@@ -186,6 +246,17 @@ alembic revision --autogenerate -m "create_legal_document_tables"
 Create `semantica/legal/db_manager.py`:
 
 ```python
+from typing import Optional, List
+from uuid import UUID
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
+
+from semantica.legal.scraper.base import LegalDocument as ScrapedDocument
+from semantica.legal.models import (
+    LegalDocumentModel, LegalChapterModel, LegalSectionModel,
+    LegalArticleModel, LegalClauseModel, LegalPointModel
+)
+
 class LegalDocumentDB:
     """Database manager for legal document storage."""
 
@@ -193,19 +264,55 @@ class LegalDocumentDB:
         self.engine = create_engine(connection_string)
         self.Session = sessionmaker(bind=self.engine)
 
-    def store_document(self, parsed_doc: Dict) -> UUID:
-        """Store parsed legal document with hierarchy."""
+    def store_from_scraper(self, scraped_doc: ScrapedDocument) -> UUID:
+        """
+        Store Phase 00 scraper output to database.
 
-    def get_article_by_number(self, doc_id: UUID, article_num: int) -> Article:
-        """Retrieve specific article."""
+        Args:
+            scraped_doc: LegalDocument from semantica.legal.scraper.base
 
-    def get_clause_text(self, article_id: UUID, clause_num: int) -> str:
+        Returns:
+            UUID of stored document
+        """
+        with self.Session() as session:
+            # Create document
+            doc = LegalDocumentModel(
+                so_hieu=scraped_doc.so_hieu,
+                title=scraped_doc.title,
+                loai_van_ban=scraped_doc.loai_van_ban,
+                co_quan_ban_hanh=scraped_doc.co_quan_ban_hanh,
+                nguoi_ky=scraped_doc.nguoi_ky,
+                ngay_ban_hanh=scraped_doc.ngay_ban_hanh,
+                ngay_hieu_luc=scraped_doc.ngay_hieu_luc,
+                tinh_trang=scraped_doc.tinh_trang,
+                raw_text=scraped_doc.raw_text,
+                source_url=scraped_doc.url,
+                metadata=scraped_doc.metadata,
+                full_hierarchy=scraped_doc.to_dict(),  # Store full JSON
+            )
+            session.add(doc)
+
+            # Store chapters with nested content
+            for pos, chapter in enumerate(scraped_doc.chapters):
+                self._store_chapter(session, doc.id, chapter, pos)
+
+            # Store standalone articles (no chapter)
+            for pos, article in enumerate(scraped_doc.articles):
+                self._store_article(session, doc.id, None, None, article, pos)
+
+            session.commit()
+            return doc.id
+
+    def get_article_by_number(self, doc_id: UUID, article_num: int) -> Optional[LegalArticleModel]:
+        """Retrieve specific article by number."""
+
+    def get_clause_text(self, article_id: UUID, clause_num: int) -> Optional[str]:
         """Retrieve clause text for citation."""
 
     def link_to_kg(self, element_id: UUID, kg_node_id: UUID, element_type: str):
         """Link DB element to KG node."""
 
-    def get_provenance(self, kg_node_id: UUID) -> Dict:
+    def get_provenance(self, kg_node_id: UUID) -> dict:
         """Get original article/clause for KG node."""
 ```
 
@@ -228,15 +335,16 @@ class LegalCitationFormatter:
 
 - [ ] Create SQLAlchemy models in `semantica/legal/models.py`
 - [ ] Set up Alembic migrations
-- [ ] Implement `LegalDocumentDB` class
-- [ ] Add indexes on document_id, article_number, effective_date
+- [ ] Implement `LegalDocumentDB.store_from_scraper()` for Phase 00 integration
+- [ ] Add indexes on so_hieu, article_number, kg_node_id
 - [ ] Implement `LegalCitationFormatter`
 - [ ] Write unit tests for CRUD operations
-- [ ] Test with sample Vietnamese law document
+- [ ] Test import from Phase 00 scraped data (10 documents, 619 articles)
 
 ## Success Criteria
 
-- [ ] All tables created with proper FK relationships
+- [ ] All 7 tables created with proper FK relationships (documents, chapters, sections, articles, clauses, points, cross_references)
+- [ ] `store_from_scraper()` successfully imports Phase 00 LegalDocument
 - [ ] JSONB full_hierarchy stores complete parsed tree
 - [ ] kg_node_id links work bidirectionally
 - [ ] Citation formatter produces "Điều X, Khoản Y" format
@@ -259,6 +367,6 @@ class LegalCitationFormatter:
 ## Next Steps
 
 After completing Phase 01:
-1. Proceed to Phase 02: Legal Document Parser
-2. Parser will populate these tables from PDF/DOCX
+1. Import Phase 00 scraped data into database
+2. Proceed to Phase 03: Legal Entity Extraction (skip Phase 02 - already have parsed data)
 3. kg_node_id will be set in Phase 04 during KG construction
