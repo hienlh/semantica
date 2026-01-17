@@ -7,12 +7,21 @@ Extracts hierarchical structure using regex patterns:
 - Điều (Article): "Điều 1", "ĐIỀU 1"
 - Khoản (Clause): "1.", "2."
 - Điểm (Point): "a)", "b)", "đ)"
+- Phụ lục (Appendix): "Phụ lục I", "PHỤ LỤC"
 """
 
 import re
 from typing import List, Optional, Tuple
 
-from .base import LegalArticle, LegalChapter, LegalClause, LegalPoint, LegalSection
+from .base import (
+    LegalAppendix,
+    LegalAppendixItem,
+    LegalArticle,
+    LegalChapter,
+    LegalClause,
+    LegalPoint,
+    LegalSection,
+)
 
 
 class HierarchyExtractor:
@@ -39,27 +48,36 @@ class HierarchyExtractor:
         "clause": re.compile(r"^\s*(\d+)\.\s*(.*)", re.MULTILINE),
         # Point: "a) ", "b) ", "đ) " or just "a)" at line start
         "point": re.compile(r"^\s*([a-zđ])\)\s*(.*)", re.MULTILINE),
+        # Appendix: "Phụ lục I", "PHỤ LỤC", "Phụ lục:" with optional number/title
+        "appendix": re.compile(
+            r"(?:^|\n)\s*(?:PHỤ\s*LỤC|Phụ\s*lục)\s*([IVXLC]+|\d+)?[\.:\s]*\n*([^\n]*)",
+            re.MULTILINE | re.IGNORECASE,
+        ),
     }
 
     def extract(
         self, text: str
-    ) -> Tuple[List[LegalChapter], List[LegalArticle]]:
+    ) -> Tuple[List[LegalChapter], List[LegalArticle], List[LegalAppendix]]:
         """
-        Extract chapters and articles from legal text.
+        Extract chapters, articles, and appendices from legal text.
 
         Args:
             text: Full text content of the legal document
 
         Returns:
-            Tuple of (chapters, standalone_articles)
+            Tuple of (chapters, standalone_articles, appendices)
             - chapters: List of LegalChapter with nested structure
             - standalone_articles: Articles not in any chapter
+            - appendices: List of LegalAppendix extracted from document
         """
+        # First, split text at appendix markers
+        main_text, appendices = self._split_appendices(text)
+
         chapters: List[LegalChapter] = []
         standalone_articles: List[LegalArticle] = []
 
-        # Find all chapters
-        chapter_matches = list(self.PATTERNS["chapter"].finditer(text))
+        # Find all chapters in main text only
+        chapter_matches = list(self.PATTERNS["chapter"].finditer(main_text))
 
         if chapter_matches:
             for i, match in enumerate(chapter_matches):
@@ -68,9 +86,9 @@ class HierarchyExtractor:
                 end = (
                     chapter_matches[i + 1].start()
                     if i + 1 < len(chapter_matches)
-                    else len(text)
+                    else len(main_text)
                 )
-                chapter_text = text[start:end]
+                chapter_text = main_text[start:end]
 
                 # Extract chapter title (may span multiple lines until first article)
                 title = self._clean_title(match.group(2))
@@ -89,9 +107,146 @@ class HierarchyExtractor:
                 chapters.append(chapter)
         else:
             # No chapters found, extract articles directly
-            standalone_articles = self._extract_articles(text)
+            standalone_articles = self._extract_articles(main_text)
 
-        return chapters, standalone_articles
+        return chapters, standalone_articles, appendices
+
+    def _split_appendices(self, text: str) -> Tuple[str, List[LegalAppendix]]:
+        """
+        Split text at appendix markers and extract appendices.
+
+        Returns:
+            Tuple of (main_text, appendices)
+        """
+        appendix_matches = list(self.PATTERNS["appendix"].finditer(text))
+
+        if not appendix_matches:
+            return text, []
+
+        # Main text is everything before first appendix
+        main_text = text[: appendix_matches[0].start()]
+        appendices: List[LegalAppendix] = []
+
+        for i, match in enumerate(appendix_matches):
+            start = match.end()
+            end = (
+                appendix_matches[i + 1].start()
+                if i + 1 < len(appendix_matches)
+                else len(text)
+            )
+            appendix_text = text[start:end]
+
+            # Extract appendix number
+            number = (match.group(1) or "").strip()
+
+            # Extract title from match.group(2) first (inline title after "PHỤ LỤC X")
+            # This captures titles like "Biểu số 1: GIẤY ỦY QUYỀN..." on the same/next line
+            inline_title = self._clean_title(match.group(2) or "")
+
+            # If inline title is meaningful, use it; otherwise extract from appendix text
+            if inline_title and len(inline_title) > 10 and not inline_title.startswith("("):
+                title = inline_title
+            else:
+                # Fall back to extracting from appendix text body
+                title = self._extract_appendix_title(appendix_text)
+
+            # Extract items from appendix (numbered items like "1. ...")
+            items = self._extract_appendix_items(appendix_text)
+
+            appendix = LegalAppendix(
+                number=number,
+                title=title,
+                items=items,
+                raw_text=match.group(0) + appendix_text,
+            )
+            appendices.append(appendix)
+
+        return main_text, appendices
+
+    def _extract_appendix_title(self, appendix_text: str) -> str:
+        """
+        Extract meaningful title from appendix text.
+
+        Skip metadata lines like "(Ban hành kèm theo...)" and find
+        the actual document title (usually ALL CAPS document type).
+        """
+        lines = appendix_text.split("\n")
+        title_parts = []
+
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+
+            # Skip metadata lines starting with parentheses
+            if line.startswith("(") and "kèm theo" in line.lower():
+                continue
+
+            # Skip common header patterns (org names, dates, etc.)
+            if any(skip in line for skip in ["CỘNG HÒA XÃ HỘI", "Độc lập", "-------", "---------------"]):
+                continue
+            if re.match(r"^(Số|ngày|tháng|năm)[:\s/]", line, re.IGNORECASE):
+                continue
+            if re.match(r"^TÊN (CƠ QUAN|DOANH NGHIỆP)", line):
+                continue
+
+            # Skip placeholder lines (mostly ellipsis, dots, or date templates)
+            ellipsis_count = line.count("…") + line.count(".")
+            if ellipsis_count > 3 and ellipsis_count > len(line) / 10:
+                continue
+
+            # Found a meaningful line - likely the title
+            # Check if it's a document type (ALL CAPS or significant text)
+            if line and len(line) > 3:
+                title_parts.append(line)
+                # Get next non-empty line if title seems incomplete
+                if len(line) < 50 and not line.endswith((".", ":", ")")):
+                    continue
+                break
+
+        # Join title parts and clean
+        title = " ".join(title_parts)
+        return self._clean_title(title)[:200]  # Limit length
+
+    def _extract_appendix_items(self, text: str) -> List[LegalAppendixItem]:
+        """Extract numbered items from appendix text."""
+        items: List[LegalAppendixItem] = []
+        lines = text.split("\n")
+        current_item: Optional[LegalAppendixItem] = None
+        current_content: List[str] = []
+
+        for line in lines:
+            # Match numbered items: "1. content" or "1) content"
+            item_match = re.match(r"^\s*(\d+)[.)\s]+(.*)$", line)
+
+            if item_match:
+                # Save previous item
+                if current_item is not None:
+                    content = "\n".join(current_content).strip()
+                    current_item.content = content
+                    current_item.raw_text = f"{current_item.number}. {content}"
+                    items.append(current_item)
+
+                # Start new item
+                current_item = LegalAppendixItem(
+                    number=int(item_match.group(1)),
+                    content="",
+                )
+                first_content = item_match.group(2).strip()
+                current_content = [first_content] if first_content else []
+            elif current_item is not None:
+                stripped = line.strip()
+                if stripped:
+                    current_content.append(stripped)
+
+        # Save last item
+        if current_item is not None:
+            content = "\n".join(current_content).strip()
+            current_item.content = content
+            current_item.raw_text = f"{current_item.number}. {content}"
+            items.append(current_item)
+
+        return items
 
     def _extract_sections_and_articles(
         self, text: str
@@ -267,7 +422,7 @@ class HierarchyExtractor:
         Returns:
             Dictionary with counts and potential issues
         """
-        chapters, articles = self.extract(text)
+        chapters, articles, appendices = self.extract(text)
 
         total_articles = len(articles)
         total_clauses = 0
@@ -292,6 +447,8 @@ class HierarchyExtractor:
             for clause in article.clauses:
                 total_points += len(clause.points)
 
+        total_appendix_items = sum(len(a.items) for a in appendices)
+
         return {
             "chapters": len(chapters),
             "sections": sum(len(c.sections) for c in chapters),
@@ -300,4 +457,6 @@ class HierarchyExtractor:
             "points": total_points,
             "has_chapters": len(chapters) > 0,
             "standalone_articles": len(articles),
+            "appendices": len(appendices),
+            "appendix_items": total_appendix_items,
         }

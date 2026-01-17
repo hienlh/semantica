@@ -124,6 +124,7 @@ from .file_ingestor import (
     FileObject,
     FileTypeDetector,
 )
+from .legal_ingestor import LegalData, LegalIngestor
 from .mcp_client import MCPClient, MCPResource, MCPTool
 from .mcp_ingestor import MCPData, MCPIngestor
 from .methods import (
@@ -133,6 +134,7 @@ from .methods import (
     ingest_email,
     ingest_feed,
     ingest_file,
+    ingest_legal,
     ingest_mcp,
     ingest_repository,
     ingest_stream,
@@ -216,6 +218,9 @@ __all__ = [
     "MCPClient",
     "MCPResource",
     "MCPTool",
+    # Legal ingestion
+    "LegalIngestor",
+    "LegalData",
     # Registry and Methods
     "MethodRegistry",
     "method_registry",
@@ -228,6 +233,7 @@ __all__ = [
     "ingest_email",
     "ingest_database",
     "ingest_mcp",
+    "ingest_legal",
     "get_ingest_method",
     "list_available_methods",
     # Configuration

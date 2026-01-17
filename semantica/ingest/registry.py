@@ -13,6 +13,7 @@ Supported Registration Types:
         * "repo": Repository ingestion methods
         * "email": Email ingestion methods
         * "db": Database ingestion methods
+        * "legal": Legal document ingestion methods
         * "ingest": General ingestion methods
 
 Algorithms Used:
@@ -56,6 +57,7 @@ class MethodRegistry:
         "email": {},
         "db": {},
         "mcp": {},
+        "legal": {},
         "ingest": {},
     }
 
@@ -65,7 +67,7 @@ class MethodRegistry:
         Register a custom ingestion method.
 
         Args:
-            task: Task type ("file", "web", "feed", "stream", "repo", "email", "db", "mcp", "ingest")
+            task: Task type ("file", "web", "feed", "stream", "repo", "email", "db", "mcp", "legal", "ingest")
             name: Method name
             method_func: Method function
         """
@@ -79,7 +81,7 @@ class MethodRegistry:
         Get method by task and name.
 
         Args:
-            task: Task type ("file", "web", "feed", "stream", "repo", "email", "db", "mcp", "ingest")
+            task: Task type ("file", "web", "feed", "stream", "repo", "email", "db", "mcp", "legal", "ingest")
             name: Method name
 
         Returns:
@@ -108,7 +110,7 @@ class MethodRegistry:
         Unregister a method.
 
         Args:
-            task: Task type ("file", "web", "feed", "stream", "repo", "email", "db", "mcp", "ingest")
+            task: Task type ("file", "web", "feed", "stream", "repo", "email", "db", "mcp", "legal", "ingest")
             name: Method name
         """
         if task in cls._methods and name in cls._methods[task]:

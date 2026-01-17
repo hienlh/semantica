@@ -15,6 +15,8 @@ Components:
 # Phase 00: Scraper
 from .scraper.base import (
     BaseLegalScraper,
+    LegalAppendix,
+    LegalAppendixItem,
     LegalArticle,
     LegalChapter,
     LegalClause,
@@ -30,6 +32,8 @@ from .citation import LegalCitationFormatter
 from .db_manager import LegalDocumentDB, load_json_document
 from .models import (
     Base,
+    LegalAppendixItemModel,
+    LegalAppendixModel,
     LegalArticleModel,
     LegalChapterModel,
     LegalClauseModel,
@@ -37,6 +41,17 @@ from .models import (
     LegalDocumentModel,
     LegalPointModel,
     LegalSectionModel,
+    # ID generation helpers
+    make_appendix_id,
+    make_appendix_item_id,
+    make_article_id,
+    make_chapter_id,
+    make_clause_id,
+    make_crossref_id,
+    make_document_id,
+    make_point_id,
+    make_section_id,
+    normalize_so_hieu,
 )
 
 # Phase 03: CrossRef Detection
@@ -50,6 +65,8 @@ __all__ = [
     "LegalArticle",
     "LegalClause",
     "LegalPoint",
+    "LegalAppendix",
+    "LegalAppendixItem",
     "BaseLegalScraper",
     "TVPLScraper",
     "HierarchyExtractor",
@@ -61,7 +78,20 @@ __all__ = [
     "LegalArticleModel",
     "LegalClauseModel",
     "LegalPointModel",
+    "LegalAppendixModel",
+    "LegalAppendixItemModel",
     "LegalCrossReferenceModel",
+    # Phase 01: ID generation helpers
+    "normalize_so_hieu",
+    "make_document_id",
+    "make_chapter_id",
+    "make_section_id",
+    "make_article_id",
+    "make_clause_id",
+    "make_point_id",
+    "make_appendix_id",
+    "make_appendix_item_id",
+    "make_crossref_id",
     # Phase 01: Database manager
     "LegalDocumentDB",
     "load_json_document",

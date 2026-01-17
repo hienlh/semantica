@@ -13,7 +13,7 @@ import re
 from dataclasses import dataclass
 from typing import List, Optional
 
-from .models import LegalCrossReferenceModel
+from .models import LegalCrossReferenceModel, make_crossref_id
 
 
 @dataclass
@@ -218,6 +218,8 @@ def store_cross_references(
     stored = 0
 
     with db.SessionLocal() as session:
+        ref_index = 0  # Global index for unique IDs
+
         for ref in references:
             # Try to resolve target article
             target_article_id = None
@@ -247,8 +249,15 @@ def store_cross_references(
                     if target:
                         target_article_id = target.id
 
+            # Generate hierarchical ID with unique index
+            crossref_id = make_crossref_id(
+                ref.source_article_id, target_article_id, ref_index
+            )
+            ref_index += 1
+
             # Create cross-reference record
             crossref = LegalCrossReferenceModel(
+                id=crossref_id,
                 source_article_id=ref.source_article_id,
                 target_article_id=target_article_id,
                 target_document_so_hieu=ref.target_so_hieu,

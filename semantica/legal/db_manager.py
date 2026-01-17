@@ -2,14 +2,21 @@
 Database manager for Vietnamese legal documents.
 
 Handles SQLite database operations:
-- Store Phase 00 scraper output
-- Query articles by number
+- Store Phase 00 scraper output with hierarchical IDs
+- Query articles by ID or number
 - Citation formatting
 - KG node linking (Phase 04)
+
+ID Format:
+- Document: "59-2020-QH14"
+- Chương:   "59-2020-QH14:c1"
+- Mục:      "59-2020-QH14:c1:m2"
+- Điều:     "59-2020-QH14:d5"
+- Khoản:    "59-2020-QH14:d5:k1"
+- Điểm:     "59-2020-QH14:d5:k1:a"
 """
 
 import json
-from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -19,14 +26,26 @@ from sqlalchemy.orm import Session, joinedload, sessionmaker
 
 from .models import (
     Base,
+    LegalAppendixItemModel,
+    LegalAppendixModel,
     LegalArticleModel,
     LegalChapterModel,
     LegalClauseModel,
     LegalDocumentModel,
     LegalPointModel,
     LegalSectionModel,
+    make_appendix_id,
+    make_appendix_item_id,
+    make_article_id,
+    make_chapter_id,
+    make_clause_id,
+    make_document_id,
+    make_point_id,
+    make_section_id,
 )
 from .scraper.base import (
+    LegalAppendix,
+    LegalAppendixItem,
     LegalArticle,
     LegalChapter,
     LegalClause,
@@ -45,37 +64,36 @@ class LegalDocumentDB:
     Usage:
         db = LegalDocumentDB()
         doc_id = db.store_document(scraped_doc)
-        article = db.get_article(doc_id, article_number=5)
+        article = db.get_article_by_id("59-2020-QH14:d5")
     """
 
     def __init__(self, db_path: str = DEFAULT_DB_PATH):
-        """
-        Initialize database connection.
-
-        Args:
-            db_path: Path to SQLite database file
-        """
-        # Ensure parent directory exists
+        """Initialize database connection."""
         Path(db_path).parent.mkdir(parents=True, exist_ok=True)
-
         self.db_path = db_path
         self.engine = create_engine(f"sqlite:///{db_path}", echo=False)
-        Base.metadata.create_all(self.engine)  # Auto-create tables
+        Base.metadata.create_all(self.engine)
         self.SessionLocal = sessionmaker(bind=self.engine)
 
     def store_document(self, doc: LegalDocument) -> str:
         """
         Store a LegalDocument from Phase 00 scraper.
 
-        Args:
-            doc: LegalDocument from scraper.base
-
         Returns:
-            Document ID (UUID string)
+            Document ID (e.g. "59-2020-QH14")
         """
         with self.SessionLocal() as session:
+            # Generate document ID from số hiệu
+            doc_id = make_document_id(doc.so_hieu)
+
+            # Track seen element numbers for duplicate handling
+            self._chapter_counts: dict[str, int] = {}  # chapter_number -> count
+            self._section_counts: dict[str, int] = {}  # "chap:section" -> count
+            self._article_counts: dict[int, int] = {}  # article_number -> count
+
             # Create document model
             doc_model = LegalDocumentModel(
+                id=doc_id,
                 so_hieu=doc.so_hieu,
                 title=doc.title,
                 loai_van_ban=doc.loai_van_ban,
@@ -88,20 +106,33 @@ class LegalDocumentDB:
                 source_url=doc.url,
             )
             session.add(doc_model)
-            session.flush()  # Get the ID
 
             # Store chapters with nested content
             for pos, chapter in enumerate(doc.chapters):
-                self._store_chapter(session, doc_model.id, chapter, pos)
+                self._store_chapter(session, doc_id, chapter, pos)
+
+            # Store appendices
+            for pos, appendix in enumerate(doc.appendices):
+                self._store_appendix(session, doc_id, appendix, pos)
 
             session.commit()
-            return doc_model.id
+            return doc_id
 
     def _store_chapter(
         self, session: Session, doc_id: str, chapter: LegalChapter, position: int
     ) -> str:
         """Store a chapter and its nested content."""
+        # Track chapter occurrences for unique ID
+        chap_key = str(chapter.number)
+        count = self._chapter_counts.get(chap_key, 0) + 1
+        self._chapter_counts[chap_key] = count
+
+        # Generate unique chapter ID: "doc:c1" or "doc:c1.2" for duplicates
+        base_id = make_chapter_id(doc_id, chapter.number)
+        chapter_id = base_id if count == 1 else f"{base_id}.{count}"
+
         chapter_model = LegalChapterModel(
+            id=chapter_id,
             document_id=doc_id,
             chapter_number=chapter.number,
             title=chapter.title,
@@ -109,19 +140,16 @@ class LegalDocumentDB:
             position=position,
         )
         session.add(chapter_model)
-        session.flush()
 
         # Store sections within chapter
         for pos, section in enumerate(chapter.sections):
-            self._store_section(session, doc_id, chapter_model.id, section, pos)
+            self._store_section(session, doc_id, chapter_id, section, pos)
 
         # Store direct articles within chapter (no section)
         for pos, article in enumerate(chapter.articles):
-            self._store_article(
-                session, doc_id, chapter_model.id, None, article, pos
-            )
+            self._store_article(session, doc_id, chapter_id, None, article, pos)
 
-        return chapter_model.id
+        return chapter_id
 
     def _store_section(
         self,
@@ -132,7 +160,17 @@ class LegalDocumentDB:
         position: int,
     ) -> str:
         """Store a section and its articles."""
+        # Track section occurrences for unique ID
+        sec_key = f"{chapter_id}:m{section.number}"
+        count = self._section_counts.get(sec_key, 0) + 1
+        self._section_counts[sec_key] = count
+
+        # Generate unique section ID: "chap:m1" or "chap:m1.2" for duplicates
+        base_id = f"{chapter_id}:m{section.number}"
+        section_id = base_id if count == 1 else f"{base_id}.{count}"
+
         section_model = LegalSectionModel(
+            id=section_id,
             chapter_id=chapter_id,
             section_number=section.number,
             title=section.title,
@@ -140,15 +178,12 @@ class LegalDocumentDB:
             position=position,
         )
         session.add(section_model)
-        session.flush()
 
         # Store articles within section
         for pos, article in enumerate(section.articles):
-            self._store_article(
-                session, doc_id, chapter_id, section_model.id, article, pos
-            )
+            self._store_article(session, doc_id, chapter_id, section_id, article, pos)
 
-        return section_model.id
+        return section_id
 
     def _store_article(
         self,
@@ -160,7 +195,16 @@ class LegalDocumentDB:
         position: int,
     ) -> str:
         """Store an article and its clauses."""
+        # Track article number occurrences for unique ID generation
+        count = self._article_counts.get(article.number, 0) + 1
+        self._article_counts[article.number] = count
+
+        # Generate unique article ID: "doc:d5" or "doc:d5.2" for duplicates
+        base_id = make_article_id(doc_id, article.number)
+        article_id = base_id if count == 1 else f"{base_id}.{count}"
+
         article_model = LegalArticleModel(
+            id=article_id,
             document_id=doc_id,
             chapter_id=chapter_id,
             section_id=section_id,
@@ -171,19 +215,35 @@ class LegalDocumentDB:
             position=position,
         )
         session.add(article_model)
-        session.flush()
+
+        # Track clause counts for this article
+        clause_counts: dict[int, int] = {}
 
         # Store clauses within article
         for pos, clause in enumerate(article.clauses):
-            self._store_clause(session, article_model.id, clause, pos)
+            self._store_clause(session, article_id, clause, pos, clause_counts)
 
-        return article_model.id
+        return article_id
 
     def _store_clause(
-        self, session: Session, article_id: str, clause: LegalClause, position: int
+        self,
+        session: Session,
+        article_id: str,
+        clause: LegalClause,
+        position: int,
+        clause_counts: dict[int, int],
     ) -> str:
         """Store a clause and its points."""
+        # Track clause occurrences for unique ID
+        count = clause_counts.get(clause.number, 0) + 1
+        clause_counts[clause.number] = count
+
+        # Generate unique clause ID: "art:k1" or "art:k1.2" for duplicates
+        base_id = make_clause_id(article_id, clause.number)
+        clause_id = base_id if count == 1 else f"{base_id}.{count}"
+
         clause_model = LegalClauseModel(
+            id=clause_id,
             article_id=article_id,
             clause_number=clause.number,
             content=clause.content,
@@ -191,19 +251,35 @@ class LegalDocumentDB:
             position=position,
         )
         session.add(clause_model)
-        session.flush()
+
+        # Track point counts for this clause
+        point_counts: dict[str, int] = {}
 
         # Store points within clause
         for pos, point in enumerate(clause.points):
-            self._store_point(session, clause_model.id, point, pos)
+            self._store_point(session, clause_id, point, pos, point_counts)
 
-        return clause_model.id
+        return clause_id
 
     def _store_point(
-        self, session: Session, clause_id: str, point: LegalPoint, position: int
+        self,
+        session: Session,
+        clause_id: str,
+        point: LegalPoint,
+        position: int,
+        point_counts: dict[str, int],
     ) -> str:
         """Store a point."""
+        # Track point occurrences for unique ID
+        count = point_counts.get(point.letter, 0) + 1
+        point_counts[point.letter] = count
+
+        # Generate unique point ID: "clause:a" or "clause:a.2" for duplicates
+        base_id = make_point_id(clause_id, point.letter)
+        point_id = base_id if count == 1 else f"{base_id}.{count}"
+
         point_model = LegalPointModel(
+            id=point_id,
             clause_id=clause_id,
             point_letter=point.letter,
             content=point.content,
@@ -211,8 +287,69 @@ class LegalDocumentDB:
             position=position,
         )
         session.add(point_model)
-        session.flush()
-        return point_model.id
+        return point_id
+
+    def _store_appendix(
+        self,
+        session: Session,
+        doc_id: str,
+        appendix: LegalAppendix,
+        position: int,
+    ) -> str:
+        """Store an appendix and its items."""
+        # Generate appendix ID
+        appendix_id = make_appendix_id(doc_id, appendix.number or str(position + 1))
+
+        appendix_model = LegalAppendixModel(
+            id=appendix_id,
+            document_id=doc_id,
+            appendix_number=appendix.number or str(position + 1),
+            title=appendix.title,
+            raw_text=appendix.raw_text,
+            position=position,
+        )
+        session.add(appendix_model)
+
+        # Track item counts for duplicates
+        item_counts: dict[int, int] = {}
+
+        # Store items within appendix
+        for pos, item in enumerate(appendix.items):
+            self._store_appendix_item(session, appendix_id, item, pos, item_counts)
+
+        return appendix_id
+
+    def _store_appendix_item(
+        self,
+        session: Session,
+        appendix_id: str,
+        item: LegalAppendixItem,
+        position: int,
+        item_counts: dict[int, int],
+    ) -> str:
+        """Store an appendix item."""
+        # Track item occurrences for unique ID
+        count = item_counts.get(item.number, 0) + 1
+        item_counts[item.number] = count
+
+        # Generate unique item ID: "appendix:mk1" or "appendix:mk1.2" for duplicates
+        base_id = make_appendix_item_id(appendix_id, item.number)
+        item_id = base_id if count == 1 else f"{base_id}.{count}"
+
+        item_model = LegalAppendixItemModel(
+            id=item_id,
+            appendix_id=appendix_id,
+            item_number=item.number,
+            content=item.content,
+            raw_text=item.raw_text,
+            position=position,
+        )
+        session.add(item_model)
+        return item_id
+
+    # =========================================================================
+    # Query Methods
+    # =========================================================================
 
     def get_document(self, doc_id: str) -> Optional[LegalDocumentModel]:
         """Get document by ID with all relationships loaded."""
@@ -245,10 +382,13 @@ class LegalDocumentDB:
                 session.expunge(result)
             return result
 
-    def get_article(
-        self, doc_id: str, article_number: int
-    ) -> Optional[LegalArticleModel]:
-        """Get article by document ID and article number with clauses loaded."""
+    def get_article_by_id(self, article_id: str) -> Optional[LegalArticleModel]:
+        """
+        Get article by hierarchical ID.
+
+        Args:
+            article_id: e.g. "59-2020-QH14:d5"
+        """
         with self.SessionLocal() as session:
             stmt = (
                 select(LegalArticleModel)
@@ -256,32 +396,39 @@ class LegalDocumentDB:
                     joinedload(LegalArticleModel.clauses)
                     .joinedload(LegalClauseModel.points)
                 )
-                .where(
-                    LegalArticleModel.document_id == doc_id,
-                    LegalArticleModel.article_number == article_number,
-                )
+                .where(LegalArticleModel.id == article_id)
             )
             result = session.scalar(stmt)
             if result:
                 session.expunge(result)
             return result
 
+    def get_article(
+        self, doc_id: str, article_number: int
+    ) -> Optional[LegalArticleModel]:
+        """Get article by document ID and article number with clauses loaded."""
+        article_id = make_article_id(doc_id, article_number)
+        return self.get_article_by_id(article_id)
+
     def get_article_by_so_hieu(
         self, so_hieu: str, article_number: int
     ) -> Optional[LegalArticleModel]:
-        """Get article by document số hiệu and article number with clauses loaded."""
+        """Get article by document số hiệu and article number."""
+        doc_id = make_document_id(so_hieu)
+        return self.get_article(doc_id, article_number)
+
+    def get_clause_by_id(self, clause_id: str) -> Optional[LegalClauseModel]:
+        """
+        Get clause by hierarchical ID.
+
+        Args:
+            clause_id: e.g. "59-2020-QH14:d5:k1"
+        """
         with self.SessionLocal() as session:
             stmt = (
-                select(LegalArticleModel)
-                .join(LegalDocumentModel)
-                .options(
-                    joinedload(LegalArticleModel.clauses)
-                    .joinedload(LegalClauseModel.points)
-                )
-                .where(
-                    LegalDocumentModel.so_hieu == so_hieu,
-                    LegalArticleModel.article_number == article_number,
-                )
+                select(LegalClauseModel)
+                .options(joinedload(LegalClauseModel.points))
+                .where(LegalClauseModel.id == clause_id)
             )
             result = session.scalar(stmt)
             if result:
@@ -292,19 +439,8 @@ class LegalDocumentDB:
         self, article_id: str, clause_number: int
     ) -> Optional[LegalClauseModel]:
         """Get clause by article ID and clause number with points loaded."""
-        with self.SessionLocal() as session:
-            stmt = (
-                select(LegalClauseModel)
-                .options(joinedload(LegalClauseModel.points))
-                .where(
-                    LegalClauseModel.article_id == article_id,
-                    LegalClauseModel.clause_number == clause_number,
-                )
-            )
-            result = session.scalar(stmt)
-            if result:
-                session.expunge(result)
-            return result
+        clause_id = make_clause_id(article_id, clause_number)
+        return self.get_clause_by_id(clause_id)
 
     def list_documents(self) -> List[LegalDocumentModel]:
         """List all documents (without relationships for performance)."""
@@ -325,6 +461,8 @@ class LegalDocumentDB:
                 "articles": session.query(LegalArticleModel).count(),
                 "clauses": session.query(LegalClauseModel).count(),
                 "points": session.query(LegalPointModel).count(),
+                "appendices": session.query(LegalAppendixModel).count(),
+                "appendix_items": session.query(LegalAppendixItemModel).count(),
             }
 
     def link_to_kg(self, element_id: str, kg_node_id: str, element_type: str) -> bool:
@@ -332,12 +470,9 @@ class LegalDocumentDB:
         Link a DB element to a KG node (Phase 04).
 
         Args:
-            element_id: UUID of the element
-            kg_node_id: UUID of the KG node
+            element_id: Hierarchical ID of the element
+            kg_node_id: ID of the KG node
             element_type: One of 'document', 'chapter', 'section', 'article', 'clause', 'point'
-
-        Returns:
-            True if successful
         """
         model_map = {
             "document": LegalDocumentModel,
@@ -346,6 +481,8 @@ class LegalDocumentDB:
             "article": LegalArticleModel,
             "clause": LegalClauseModel,
             "point": LegalPointModel,
+            "appendix": LegalAppendixModel,
+            "appendix_item": LegalAppendixItemModel,
         }
 
         model_class = model_map.get(element_type)
@@ -359,6 +496,11 @@ class LegalDocumentDB:
                 session.commit()
                 return True
             return False
+
+
+# =============================================================================
+# JSON Loading Helpers
+# =============================================================================
 
 
 def load_json_document(json_path: str) -> LegalDocument:
@@ -397,6 +539,9 @@ def load_json_document(json_path: str) -> LegalDocument:
     # Build standalone articles
     articles = [_parse_article(a) for a in data.get("articles", [])]
 
+    # Build appendices
+    appendices = [_parse_appendix(a) for a in data.get("appendices", [])]
+
     return LegalDocument(
         url=data.get("url", ""),
         so_hieu=data.get("so_hieu", ""),
@@ -409,6 +554,7 @@ def load_json_document(json_path: str) -> LegalDocument:
         tinh_trang=data.get("tinh_trang", ""),
         chapters=chapters,
         articles=articles,
+        appendices=appendices,
         raw_text=data.get("raw_text", ""),
         metadata=data.get("metadata", {}),
     )
@@ -449,6 +595,25 @@ def _parse_point(data: Dict[str, Any]) -> LegalPoint:
     """Parse point from dict."""
     return LegalPoint(
         letter=data["letter"],
+        content=data.get("content", ""),
+        raw_text=data.get("raw_text", ""),
+    )
+
+
+def _parse_appendix(data: Dict[str, Any]) -> LegalAppendix:
+    """Parse appendix from dict."""
+    return LegalAppendix(
+        number=data.get("number", ""),
+        title=data.get("title", ""),
+        raw_text=data.get("raw_text", ""),
+        items=[_parse_appendix_item(i) for i in data.get("items", [])],
+    )
+
+
+def _parse_appendix_item(data: Dict[str, Any]) -> LegalAppendixItem:
+    """Parse appendix item from dict."""
+    return LegalAppendixItem(
+        number=data["number"],
         content=data.get("content", ""),
         raw_text=data.get("raw_text", ""),
     )

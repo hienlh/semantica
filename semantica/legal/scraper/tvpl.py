@@ -271,14 +271,15 @@ class TVPLScraper(BaseLegalScraper):
 
                 # Extract hierarchy
                 extractor = HierarchyExtractor()
-                doc.chapters, doc.articles = extractor.extract(doc.raw_text)
+                doc.chapters, doc.articles, doc.appendices = extractor.extract(doc.raw_text)
 
                 # Log extraction stats
                 stats = extractor.validate_structure(doc.raw_text)
                 logger.info(
                     f"Extracted: {stats['chapters']} chapters, "
                     f"{stats['articles']} articles, "
-                    f"{stats['clauses']} clauses"
+                    f"{stats['clauses']} clauses, "
+                    f"{stats['appendices']} appendices"
                 )
             else:
                 errors.append("Content element not found with any selector")

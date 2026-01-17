@@ -43,6 +43,50 @@ class DocumentType(Enum):
 
 
 @dataclass
+class LegalAppendixItem:
+    """
+    Represents an item within an appendix (Mục trong Phụ lục).
+
+    Example: "1. Sản xuất cung ứng thuốc nổ..."
+    """
+
+    number: int
+    content: str
+    raw_text: str = ""
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        return {
+            "number": self.number,
+            "content": self.content,
+            "raw_text": self.raw_text,
+        }
+
+
+@dataclass
+class LegalAppendix:
+    """
+    Represents an appendix (Phụ lục) in Vietnamese legal text.
+
+    Example: "PHỤ LỤC I: DANH MỤC NGÀNH..."
+    """
+
+    number: str  # "I", "II", "1", "2", or empty for single appendix
+    title: str
+    items: List["LegalAppendixItem"] = field(default_factory=list)
+    raw_text: str = ""
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        return {
+            "number": self.number,
+            "title": self.title,
+            "items": [i.to_dict() for i in self.items],
+            "raw_text": self.raw_text,
+        }
+
+
+@dataclass
 class LegalPoint:
     """
     Represents a point (Điểm) in Vietnamese legal text.
@@ -192,6 +236,7 @@ class LegalDocument:
     tinh_trang: str = ""
     chapters: List[LegalChapter] = field(default_factory=list)
     articles: List[LegalArticle] = field(default_factory=list)
+    appendices: List[LegalAppendix] = field(default_factory=list)
     raw_html: str = ""
     raw_text: str = ""
     metadata: Dict[str, Any] = field(default_factory=dict)
@@ -212,6 +257,7 @@ class LegalDocument:
             "tinh_trang": self.tinh_trang,
             "chapters": [c.to_dict() for c in self.chapters],
             "articles": [a.to_dict() for a in self.articles],
+            "appendices": [a.to_dict() for a in self.appendices],
             "metadata": self.metadata,
             "scrape_errors": self.scrape_errors,
             "is_complete": self.is_complete,

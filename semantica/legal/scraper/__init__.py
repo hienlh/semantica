@@ -7,6 +7,8 @@ from .base import (
     LegalArticle,
     LegalClause,
     LegalPoint,
+    LegalAppendix,
+    LegalAppendixItem,
     BaseLegalScraper,
 )
 from .tvpl import TVPLScraper
@@ -19,6 +21,8 @@ __all__ = [
     "LegalArticle",
     "LegalClause",
     "LegalPoint",
+    "LegalAppendix",
+    "LegalAppendixItem",
     "BaseLegalScraper",
     "TVPLScraper",
     "HierarchyExtractor",

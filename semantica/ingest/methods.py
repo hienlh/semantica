@@ -149,6 +149,7 @@ from .db_ingestor import DBIngestor, TableData
 from .email_ingestor import EmailData, EmailIngestor
 from .feed_ingestor import FeedData, FeedIngestor
 from .file_ingestor import FileIngestor, FileObject
+from .legal_ingestor import LegalData, LegalIngestor
 from .mcp_ingestor import MCPData, MCPIngestor
 from .registry import method_registry
 from .repo_ingestor import RepoIngestor
@@ -747,6 +748,94 @@ def ingest_mcp(
         raise
 
 
+def ingest_legal(
+    source: Union[str, List[str]],
+    method: str = "full",
+    **kwargs,
+) -> Union[LegalData, List[LegalData], Dict[str, Any]]:
+    """
+    Ingest Vietnamese legal documents (convenience function).
+
+    This is a user-friendly wrapper that ingests legal documents from
+    thuvienphapluat.vn (TVPL) using the specified method.
+
+    Args:
+        source: URL, URL file, HTML file pattern, or list of URLs
+        method: Ingestion method (default: "full")
+            - "scrape": Scrape from URL(s)
+            - "parse": Parse HTML file(s) to JSON
+            - "import": Import JSON file(s) to database
+            - "full": Full pipeline (scrape/parse → import)
+            - "reimport": Re-parse HTML and import to fresh DB
+        **kwargs: Additional options:
+            - output_dir: Directory for scraped files (default: "scraped_legal_docs")
+            - db_path: Database path (default: "data/legal_docs.db")
+            - fresh: Recreate database (default: True for full/reimport)
+            - headless: Run browser headless (default: True)
+
+    Returns:
+        LegalData, List[LegalData], or Dict with ingestion results
+
+    Examples:
+        >>> from semantica.ingest import ingest_legal
+        >>> # Full pipeline from URL file
+        >>> stats = ingest_legal("urls.txt", method="full")
+        >>> # Scrape single URL
+        >>> doc = ingest_legal("https://thuvienphapluat.vn/...", method="scrape")
+        >>> # Parse HTML files
+        >>> docs = ingest_legal("./docs/*.html", method="parse")
+        >>> # Import JSON to database
+        >>> stats = ingest_legal("./docs/json/*.json", method="import")
+        >>> # Reimport all from directory
+        >>> stats = ingest_legal("./docs", method="reimport")
+    """
+    # Check for custom method in registry
+    custom_method = method_registry.get("legal", method)
+    if custom_method and custom_method != ingest_legal:
+        try:
+            return custom_method(source, **kwargs)
+        except Exception as e:
+            logger.warning(
+                f"Custom method {method} failed: {e}, falling back to default"
+            )
+
+    try:
+        # Get config
+        config = ingest_config.get_method_config("legal") if hasattr(ingest_config, "get_method_config") else {}
+        config.update(kwargs)
+
+        ingestor = LegalIngestor(**config)
+
+        if method == "scrape":
+            if isinstance(source, list):
+                return ingestor.scrape_urls_sync(source, **kwargs)
+            elif source.endswith(".txt"):
+                return ingestor.scrape_from_file(source, **kwargs)
+            else:
+                return ingestor.scrape_sync(source, **kwargs)
+        elif method == "parse":
+            if isinstance(source, list):
+                return ingestor.parse_html_files(source, **kwargs)
+            else:
+                return ingestor.parse_html_files([source], **kwargs)
+        elif method == "import":
+            if isinstance(source, list):
+                return ingestor.import_to_db(source, **kwargs)
+            else:
+                return ingestor.import_to_db([source], **kwargs)
+        elif method == "reimport":
+            return ingestor.reimport_all(source, **kwargs)
+        elif method == "full":
+            return ingestor.full_pipeline(source, **kwargs)
+        else:
+            # Default: full pipeline
+            return ingestor.full_pipeline(source, **kwargs)
+
+    except Exception as e:
+        logger.error(f"Failed to ingest legal: {e}")
+        raise
+
+
 def ingest(
     sources: Union[List[Union[str, Path]], str, Path],
     source_type: Optional[str] = None,
@@ -769,6 +858,8 @@ def ingest(
             - "repo": Repository ingestion
             - "email": Email ingestion
             - "db": Database ingestion
+            - "mcp": MCP server ingestion
+            - "legal": Vietnamese legal document ingestion
         method: Optional specific ingestion method
         **kwargs: Additional options passed to ingestor
 
@@ -832,6 +923,8 @@ def ingest(
         return {"data": ingest_database(sources, method=method, **kwargs)}
     elif source_type == "mcp":
         return {"data": ingest_mcp(sources, method=method or "resources", **kwargs)}
+    elif source_type == "legal":
+        return {"data": ingest_legal(sources, method=method or "full", **kwargs)}
     else:
         raise ProcessingError(f"Unknown source type: {source_type}")
 
@@ -841,7 +934,7 @@ def get_ingest_method(task: str, name: str) -> Optional[Callable]:
     Get a registered ingestion method.
 
     Args:
-        task: Task type ("file", "web", "feed", "stream", "repo", "email", "db", "mcp", "ingest")
+        task: Task type ("file", "web", "feed", "stream", "repo", "email", "db", "mcp", "legal", "ingest")
         name: Method name
 
     Returns:
@@ -909,5 +1002,11 @@ method_registry.register("mcp", "default", ingest_mcp)
 method_registry.register("mcp", "resources", ingest_mcp)
 method_registry.register("mcp", "tools", ingest_mcp)
 method_registry.register("mcp", "all", ingest_mcp)
+method_registry.register("legal", "default", ingest_legal)
+method_registry.register("legal", "scrape", ingest_legal)
+method_registry.register("legal", "parse", ingest_legal)
+method_registry.register("legal", "import", ingest_legal)
+method_registry.register("legal", "full", ingest_legal)
+method_registry.register("legal", "reimport", ingest_legal)
 method_registry.register("ingest", "default", ingest)
 method_registry.register("ingest", "unified", ingest)
