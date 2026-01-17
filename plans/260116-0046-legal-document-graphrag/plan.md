@@ -23,11 +23,11 @@ Build a Legal QA Chatbot for Vietnamese legal documents. System scrapes from thu
 | **00** | Web Scraper (thuvienphapluat.vn) | 4h | ✅ **Done** | Playwright |
 | **01** | Legal Document Database | 3h | ✅ **Done** | SQLite, SQLAlchemy |
 | ~~02~~ | ~~Legal Document Parser~~ | ~~6h~~ | ⏭️ **Skip** | *(Scraper handles parsing)* |
-| **03** | CrossRef Detection | 2h | 🔲 Pending | Phase 01 |
+| **03** | CrossRef Detection | 2h | ✅ **Done** | Phase 01 |
 | **04** | Semantica Integration | 2h | 🔲 Pending | Phase 03 |
 | **05** | AI Chatbot (QA) | 3h | 🔲 Pending | Phase 04 |
 
-**Total: 14h** (remaining: ~7h)
+**Total: 14h** (remaining: ~5h)
 
 ## Architecture
 
@@ -94,8 +94,8 @@ Legal PDF/DOCX → FileIngestor → DoclingParser → LegalDocumentParser
 | Phase 00 | ✅ Done | 10 docs scraped (619+ articles) |
 | Phase 01 | ✅ Done | 615 articles, 2505 clauses, 1772 points in SQLite |
 | Phase 02 | ⏭️ Skip | Scraper handles parsing |
-| Phase 03 | 🔲 Next | CrossRef detection |
-| Phase 04 | 🔲 Pending | Semantica integration |
+| Phase 03 | ✅ Done | 168 cross-refs detected (132 resolved) |
+| Phase 04 | 🔲 Next | Semantica integration |
 | Phase 05 | 🔲 Pending | AI Chatbot QA |
 
 ### Confirmed Decisions (2026-01-17)
@@ -124,6 +124,6 @@ Location: `./scraped_legal_docs/`
 - [Phase 00: Web Scraper](./phase-00-web-scraper.md) ✅ Done
 - [Phase 01: Legal Document Database](./phase-01-legal-document-database.md) ✅ Done
 - ~~[Phase 02: Legal Document Parser](./phase-02-legal-document-parser.md)~~ ⏭️ Skip
-- [Phase 03: CrossRef Detection](./phase-03-legal-entity-extraction.md) ← **Next**
-- [Phase 04: Semantica Integration](./phase-04-legal-kg-ontology.md)
+- [Phase 03: CrossRef Detection](./phase-03-legal-entity-extraction.md) ✅ Done
+- [Phase 04: Semantica Integration](./phase-04-legal-kg-ontology.md) ← **Next**
 - [Phase 05: AI Chatbot](./phase-05-legal-graphrag-integration.md)

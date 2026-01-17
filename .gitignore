@@ -117,3 +117,6 @@ test_results.txt
 # # Scraped legal documents (generated output)
 # scraped_legal_docs/*.json
 # scraped_legal_docs/*.html
+
+# Runtime data
+data/
