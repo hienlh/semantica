@@ -1,32 +1,33 @@
 ---
 title: "Legal Document GraphRAG System"
 description: "Vietnamese legal document GraphRAG with hierarchical database, entity extraction, and provenance-aware retrieval"
-status: pending
+status: in_progress
 priority: P1
-effort: 32h
-branch: main
-tags: [legal, graphrag, vietnamese, nlp, postgresql, knowledge-graph]
+effort: 16h
+branch: legal
+tags: [legal, graphrag, vietnamese, nlp, sqlite, knowledge-graph]
 created: 2026-01-16
+updated: 2026-01-17
 ---
 
 # Legal Document GraphRAG System
 
 ## Overview
 
-Build a comprehensive Legal Document GraphRAG system for Vietnamese legal documents. The system parses hierarchical legal structures (Văn bản > Chương > Mục > Điều > Khoản > Điểm), stores in parallel PostgreSQL database, extracts legal entities with cross-reference detection, builds knowledge graphs with legal ontology, and provides provenance-aware GraphRAG retrieval.
+Build a Legal QA Chatbot for Vietnamese legal documents. System scrapes from thuvienphapluat.vn, stores hierarchical structure (Văn bản > Chương > Mục > Điều > Khoản > Điểm) in SQLite, detects cross-references, and provides AI answers with article citations.
 
 ## Phase Summary
 
-| Phase | Description | Effort | Dependencies |
-|-------|-------------|--------|--------------|
-| **00** | **Web Scraper (thuvienphapluat.vn)** | **4h** | Playwright |
-| 01 | Legal Document Database | 4h | PostgreSQL, SQLAlchemy |
-| 02 | Legal Document Parser | 6h | Phase 00-01, underthesea |
-| 03 | CrossRef Detection | 3h | Phase 02 |
-| 04 | Semantica Integration | 2h | Phase 03, Semantica KG |
-| 05 | AI Chatbot (AgentContext) | 3h | Phase 04 |
+| Phase | Description | Effort | Status | Dependencies |
+|-------|-------------|--------|--------|--------------|
+| **00** | Web Scraper (thuvienphapluat.vn) | 4h | ✅ **Done** | Playwright |
+| **01** | Legal Document Database | 3h | ✅ **Done** | SQLite, SQLAlchemy |
+| ~~02~~ | ~~Legal Document Parser~~ | ~~6h~~ | ⏭️ **Skip** | *(Scraper handles parsing)* |
+| **03** | CrossRef Detection | 2h | 🔲 Pending | Phase 01 |
+| **04** | Semantica Integration | 2h | 🔲 Pending | Phase 03 |
+| **05** | AI Chatbot (QA) | 3h | 🔲 Pending | Phase 04 |
 
-**Total: 22h** (simplified from 32h)
+**Total: 14h** (remaining: ~7h)
 
 ## Architecture
 
@@ -83,49 +84,46 @@ Legal PDF/DOCX → FileIngestor → DoclingParser → LegalDocumentParser
 
 ## Validation Summary
 
-**Validated:** 2026-01-16 (Re-validated)
-**Questions asked:** 10
+**Last Validated:** 2026-01-17
+**Status:** Phase 00 Done, Phase 01 Next
 
-### Re-validated Requirements
+### Progress Tracking
 
-| Aspect | Original | Final Decision |
-|--------|----------|----------------|
-| **Core Goal** | Full GraphRAG | **Simplified: Parse + Store + CrossRef + Integrate Semantica** |
-| **Use Case** | Generic | **AI Chatbot trả lời câu hỏi luật** |
-| **DB Storage** | JSONB-only | **Normalized tables** (để query trực tiếp) |
-| **KG/Ontology** | Custom build | **Integrate với Semantica pipeline có sẵn** |
-| **NER** | Full extraction | **Skip NER, chỉ CrossRef detection** |
+| Phase | Status | Notes |
+|-------|--------|-------|
+| Phase 00 | ✅ Done | 10 docs scraped (619+ articles) |
+| Phase 01 | ✅ Done | 615 articles, 2505 clauses, 1772 points in SQLite |
+| Phase 02 | ⏭️ Skip | Scraper handles parsing |
+| Phase 03 | 🔲 Next | CrossRef detection |
+| Phase 04 | 🔲 Pending | Semantica integration |
+| Phase 05 | 🔲 Pending | AI Chatbot QA |
 
-### Confirmed Decisions
+### Confirmed Decisions (2026-01-17)
 
 | Decision | User Choice |
 |----------|-------------|
-| DB Storage | **Normalized tables** (documents → chapters → articles → clauses → points) |
-| Cross-ref | **Must include law ID** (strict) |
-| KG approach | **Simplified DB relations → Integrate Semantica later** |
-| VN NLP | underthesea (for tokenization only) |
+| Database | **SQLite** (zero-config, file-based) |
+| Phase 02 | **Skip** (scraper already parses) |
+| Use Case | **QA Chatbot** (trả lời câu hỏi luật với citation) |
 | Citation format | Vietnamese: "Điều X, Khoản Y - Luật Z" |
+| Cross-ref | Must include law ID (strict) |
 
-### Action Items (Plan Revisions Needed)
+### Scraped Data (Phase 00 Output)
 
-- [ ] **Phase 01**: Use normalized tables (NOT JSONB-only)
-- [ ] **Phase 03**: Simplify to CrossRef detection only (skip full NER)
-- [ ] **Phase 04**: Replace custom KG with Semantica integration code
-- [ ] **Phase 05**: Use existing AgentContext instead of custom GraphRAG
-- [ ] **Effort**: Reduce from 32h → 18h
+Location: `./scraped_legal_docs/`
 
-### Simplified Scope
-
-```
-Original: Parse → JSONB → NER → Custom KG → Custom Ontology → Custom GraphRAG
-Simplified: Parse → Normalized DB → CrossRef → Integrate Semantica KG/Ontology → AgentContext
-```
+| File | Document | Chapters | Articles |
+|------|----------|----------|----------|
+| 59-2020-QH14.json | Luật Doanh nghiệp 2020 | 10 | 176 |
+| 01-2021-ND.json | Nghị định 01/2021 | - | - |
+| 16-2023-ND.json | Nghị định 16/2023 | - | - |
+| + 7 more | ... | - | - |
 
 ## Phase Files
 
-- [**Phase 00: Web Scraper (thuvienphapluat.vn)**](./phase-00-web-scraper.md) ⭐ NEW
-- [Phase 01: Legal Document Database](./phase-01-legal-document-database.md)
-- [Phase 02: Legal Document Parser](./phase-02-legal-document-parser.md)
-- [Phase 03: CrossRef Detection](./phase-03-legal-entity-extraction.md)
+- [Phase 00: Web Scraper](./phase-00-web-scraper.md) ✅ Done
+- [Phase 01: Legal Document Database](./phase-01-legal-document-database.md) ✅ Done
+- ~~[Phase 02: Legal Document Parser](./phase-02-legal-document-parser.md)~~ ⏭️ Skip
+- [Phase 03: CrossRef Detection](./phase-03-legal-entity-extraction.md) ← **Next**
 - [Phase 04: Semantica Integration](./phase-04-legal-kg-ontology.md)
 - [Phase 05: AI Chatbot](./phase-05-legal-graphrag-integration.md)
