@@ -11,6 +11,8 @@ Components:
 - Citation: Format legal citations (Phase 01)
 - CrossRef: Cross-reference detection (Phase 03)
 - Abbreviation: Vietnamese legal abbreviation extraction (Phase 03.5)
+- Knowledge Graph: Entity/relation extraction and KG building (Phase 04)
+- Ontology: OWL ontology generation for legal domain (Phase 04)
 """
 
 # Phase 00: Scraper
@@ -68,6 +70,40 @@ from .abbreviation_extractor import (
 )
 from .models import LegalAbbreviationModel
 
+# Phase 04: Knowledge Graph & Ontology
+from .entity_types import (
+    ABBREVIATION_TO_ENTITY_TYPE,
+    ENTITY_PATTERNS,
+    LEGAL_ENTITY_TYPES,
+    LegalEntityType,
+)
+from .relation_types import (
+    INVERSE_RELATIONS,
+    LEGAL_RELATION_TYPES,
+    LegalRelationType,
+    RELATION_PATTERNS,
+)
+from .ner_extractor import LegalEntity, LegalNERExtractor
+from .relation_extractor import LegalRelation, LegalRelationExtractor
+from .kg_builder import (
+    KGEdge,
+    KGNode,
+    LegalKGBuilder,
+    LegalKnowledgeGraph,
+)
+from .ontology_generator import (
+    LegalOntology,
+    LegalOntologyGenerator,
+    OntologyClass,
+    OntologyProperty,
+)
+from .kg_linker import KGSQLiteLinker
+from .pipeline import (
+    LegalSemanticaPipeline,
+    PipelineConfig,
+    PipelineResult,
+)
+
 __all__ = [
     # Phase 00: Scraper data classes
     "LegalDocument",
@@ -119,4 +155,36 @@ __all__ = [
     "expand_search_terms",
     "get_full_form",
     "KNOWN_LEGAL_ABBREVIATIONS",
+    # Phase 04: Entity Types
+    "LegalEntityType",
+    "LEGAL_ENTITY_TYPES",
+    "ENTITY_PATTERNS",
+    "ABBREVIATION_TO_ENTITY_TYPE",
+    # Phase 04: Relation Types
+    "LegalRelationType",
+    "LEGAL_RELATION_TYPES",
+    "RELATION_PATTERNS",
+    "INVERSE_RELATIONS",
+    # Phase 04: NER Extraction
+    "LegalEntity",
+    "LegalNERExtractor",
+    # Phase 04: Relation Extraction
+    "LegalRelation",
+    "LegalRelationExtractor",
+    # Phase 04: Knowledge Graph
+    "KGNode",
+    "KGEdge",
+    "LegalKnowledgeGraph",
+    "LegalKGBuilder",
+    # Phase 04: Ontology
+    "OntologyClass",
+    "OntologyProperty",
+    "LegalOntology",
+    "LegalOntologyGenerator",
+    # Phase 04: KG-SQLite Linker
+    "KGSQLiteLinker",
+    # Phase 04: Pipeline
+    "PipelineConfig",
+    "PipelineResult",
+    "LegalSemanticaPipeline",
 ]

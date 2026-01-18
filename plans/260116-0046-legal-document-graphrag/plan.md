@@ -7,7 +7,7 @@ effort: 16h
 branch: legal
 tags: [legal, graphrag, vietnamese, nlp, sqlite, knowledge-graph]
 created: 2026-01-16
-updated: 2026-01-17
+updated: 2026-01-18
 ---
 
 # Legal Document GraphRAG System
@@ -25,10 +25,10 @@ Build a Legal QA Chatbot for Vietnamese legal documents. System scrapes from thu
 | ~~02~~ | ~~Legal Document Parser~~ | ~~6h~~ | ⏭️ **Skip** | *(Scraper handles parsing)* |
 | **03** | CrossRef Detection | 2h | ✅ **Done** | Phase 01 |
 | **03.5** | Data Quality Fix (scraper bug) | 1.5h | ✅ **Done** | Phase 03 |
-| **04** | Semantica Integration (KG/Ontology) | 12.5h | 🔲 Pending | Phase 03.5 (Step 0, 0.5 done) |
+| **04** | Semantica Integration (KG/Ontology) | 12.5h | ✅ **Done** | Phase 03.5 |
 | **05** | AI Chatbot (QA) | 3h | 🔲 Pending | Phase 04 |
 
-**Total: 26h** (remaining: ~15.5h)
+**Total: 26h** (remaining: ~3h)
 
 ## Architecture
 
@@ -98,7 +98,7 @@ Legal PDF/DOCX → FileIngestor → DoclingParser → LegalDocumentParser
 | Phase 02 | ⏭️ Skip | Scraper handles parsing |
 | Phase 03 | ✅ Done | 168 cross-refs detected (132 resolved), NER skipped (YAGNI) |
 | Phase 03.5 | ✅ Done | Fixed `<huongdan>` stripping, re-parsed HTML, re-imported DB, crossref restored (168) |
-| Phase 04 | 🔲 Pending | Step 0 (skip), 0.5 (done) → NER→Relations→KG→Ontology |
+| Phase 04 | ✅ Done | NER→Relations→KG→Ontology pipeline implemented |
 | Phase 05 | 🔲 Pending | AI Chatbot QA |
 
 ### Confirmed Decisions (2026-01-17)
@@ -151,6 +151,8 @@ Location: `./scraped_legal_docs/`
 | 00 | `scraper/base.py`, `scraper/tvpl.py`, `scraper/hierarchy_extractor.py` |
 | 01 | `models.py` (9 models), `db_manager.py`, `citation.py` |
 | 03 | `crossref_detector.py` |
+| 03.5 | `abbreviation_extractor.py` |
+| 04 | `entity_types.py`, `relation_types.py`, `ner_extractor.py`, `relation_extractor.py`, `kg_builder.py`, `ontology_generator.py`, `kg_linker.py`, `pipeline.py` |
 
 ## Phase Files
 
@@ -159,5 +161,5 @@ Location: `./scraped_legal_docs/`
 - ~~[Phase 02: Legal Document Parser](./phase-02-legal-document-parser.md)~~ ⏭️ Skip
 - [Phase 03: CrossRef Detection](./phase-03-legal-entity-extraction.md) ✅ Done (simplified)
 - [Phase 03.5: Data Quality Fix](./phase-03-5-legal-text-normalizer.md) ← **Planning**
-- [Phase 04: KG & Ontology](./phase-04-legal-kg-ontology.md)
+- [Phase 04: KG & Ontology](./phase-04-legal-kg-ontology.md) ✅ Done
 - [Phase 05: AI Chatbot](./phase-05-legal-graphrag-integration.md)
