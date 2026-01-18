@@ -387,12 +387,16 @@ class TVPLScraper(BaseLegalScraper):
 
         return None
 
+    # Web UI elements to strip from content (TVPL-specific)
+    WEB_UI_ELEMENTS = ["huongdan", "tooltip"]
+
     def _extract_text_from_paragraphs(self, content_el: "Tag") -> str:
         """
         Extract clean text from HTML content using paragraph-based approach.
 
         Strategy (inspired by LegalRAG):
         - Extract text from each <p> tag
+        - Strip web UI elements (huongdan, tooltip) before extraction
         - Normalize whitespace within each paragraph
         - Join paragraphs with double newlines (\\n\\n) as delimiters
         - This produces clean text suitable for regex-based hierarchy extraction
@@ -407,6 +411,12 @@ class TVPLScraper(BaseLegalScraper):
         cleaned_paragraphs = []
 
         for p in paragraphs:
+            # Strip web UI elements before extracting text
+            # These elements contain amendment guidance ("Bổ sung", "Sửa đổi")
+            # that should not be part of the legal content
+            for ui_element in p.find_all(self.WEB_UI_ELEMENTS):
+                ui_element.decompose()
+
             # Get text and normalize internal whitespace
             text = p.get_text()
             # Replace multiple whitespace (including newlines) with single space

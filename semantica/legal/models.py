@@ -528,3 +528,33 @@ class LegalAppendixItemModel(Base):
 
     # Relationships
     appendix = relationship("LegalAppendixModel", back_populates="items")
+
+
+class LegalAbbreviationModel(Base):
+    """
+    Vietnamese legal abbreviation dictionary.
+
+    Stores abbreviations extracted from legal documents for:
+    - Entity linking during KG construction (HĐQT → Hội đồng quản trị)
+    - Search enhancement (query both abbreviated and full forms)
+
+    ID Format: "{abbreviation}" → "HĐQT"
+    """
+
+    __tablename__ = "legal_abbreviations"
+
+    id = Column(String(50), primary_key=True)  # abbreviation itself (HĐQT, TGĐ)
+    abbreviation = Column(String(50), nullable=False, unique=True, index=True)
+    full_form = Column(String(300), nullable=True)  # Hội đồng quản trị
+    category = Column(String(50), nullable=True)  # corporate, document_type, position
+    corpus_count = Column(Integer, default=0)  # times found in corpus
+    confidence = Column(Integer, default=100)  # detection confidence 0-100
+    detection_reason = Column(String(50))  # all_consonants, hyphenated, etc.
+    sample_context = Column(Text)  # sample usage from corpus
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (
+        Index("idx_abbrev_category", "category"),
+        Index("idx_abbrev_count", "corpus_count"),
+    )

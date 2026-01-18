@@ -26,6 +26,7 @@ from sqlalchemy.orm import Session, joinedload, sessionmaker
 
 from .models import (
     Base,
+    LegalAbbreviationModel,
     LegalAppendixItemModel,
     LegalAppendixModel,
     LegalArticleModel,
@@ -43,6 +44,7 @@ from .models import (
     make_point_id,
     make_section_id,
 )
+from .abbreviation_extractor import AbbreviationExtractor, AbbreviationMatch
 from .scraper.base import (
     LegalAppendix,
     LegalAppendixItem,
@@ -74,6 +76,7 @@ class LegalDocumentDB:
         self.engine = create_engine(f"sqlite:///{db_path}", echo=False)
         Base.metadata.create_all(self.engine)
         self.SessionLocal = sessionmaker(bind=self.engine)
+        self._abbrev_extractor = AbbreviationExtractor()
 
     def store_document(self, doc: LegalDocument) -> str:
         """
@@ -114,6 +117,10 @@ class LegalDocumentDB:
             # Store appendices
             for pos, appendix in enumerate(doc.appendices):
                 self._store_appendix(session, doc_id, appendix, pos)
+
+            # Extract and store abbreviations from document text
+            if doc.raw_text:
+                self._extract_and_store_abbreviations(session, doc.raw_text)
 
             session.commit()
             return doc_id
@@ -347,6 +354,126 @@ class LegalDocumentDB:
         session.add(item_model)
         return item_id
 
+    def _extract_and_store_abbreviations(
+        self, session: Session, text: str
+    ) -> List[str]:
+        """
+        Extract abbreviations from text and store/update in database.
+
+        Args:
+            session: Database session
+            text: Document text to analyze
+
+        Returns:
+            List of abbreviation IDs that were stored/updated
+        """
+        matches = self._abbrev_extractor.extract_from_text(text)
+        stored_ids = []
+
+        for match in matches:
+            # Check if abbreviation already exists
+            existing = session.get(LegalAbbreviationModel, match.abbreviation)
+
+            if existing:
+                # Update count (aggregate across documents)
+                existing.corpus_count += match.count
+                # Update context if new one is better (has more context)
+                if match.sample_context and len(match.sample_context) > len(
+                    existing.sample_context or ""
+                ):
+                    existing.sample_context = match.sample_context
+                # Update full_form if new one has higher confidence
+                if match.full_form and (
+                    not existing.full_form or
+                    match.full_form_confidence > existing.confidence
+                ):
+                    existing.full_form = match.full_form
+            else:
+                # Create new abbreviation record
+                # full_form is auto-detected from text patterns
+                abbrev_model = LegalAbbreviationModel(
+                    id=match.abbreviation,
+                    abbreviation=match.abbreviation,
+                    full_form=match.full_form,  # Auto-detected from text
+                    category=None,  # Set manually later
+                    corpus_count=match.count,
+                    confidence=match.confidence,
+                    detection_reason=match.detection_reason,
+                    sample_context=match.sample_context,
+                )
+                session.add(abbrev_model)
+
+            stored_ids.append(match.abbreviation)
+
+        return stored_ids
+
+    def extract_abbreviations_from_all_documents(self) -> int:
+        """
+        Re-extract abbreviations from all stored documents.
+
+        Collects text from articles, clauses, and points (since raw_text
+        at document level may be empty).
+
+        Use this to refresh abbreviation table after algorithm updates
+        or when importing documents without abbreviation extraction.
+
+        Returns:
+            Number of abbreviations extracted
+        """
+        with self.SessionLocal() as session:
+            # Clear existing abbreviations
+            session.query(LegalAbbreviationModel).delete()
+
+            # Collect text from all levels
+            all_texts = []
+
+            # Get document raw_text (if available)
+            docs = session.query(LegalDocumentModel).all()
+            for doc in docs:
+                if doc.raw_text:
+                    all_texts.append(doc.raw_text)
+
+            # Get article content
+            articles = session.query(LegalArticleModel).all()
+            for art in articles:
+                if art.content:
+                    all_texts.append(art.content)
+                if art.raw_text:
+                    all_texts.append(art.raw_text)
+
+            # Get clause content
+            clauses = session.query(LegalClauseModel).all()
+            for cl in clauses:
+                if cl.content:
+                    all_texts.append(cl.content)
+
+            # Get point content
+            points = session.query(LegalPointModel).all()
+            for pt in points:
+                if pt.content:
+                    all_texts.append(pt.content)
+
+            # Extract from all texts combined
+            if all_texts:
+                matches = self._abbrev_extractor.extract_from_texts(all_texts)
+                for match in matches:
+                    abbrev_model = LegalAbbreviationModel(
+                        id=match.abbreviation,
+                        abbreviation=match.abbreviation,
+                        full_form=match.full_form,  # Auto-detected from text
+                        category=None,  # Set manually later
+                        corpus_count=match.count,
+                        confidence=match.confidence,
+                        detection_reason=match.detection_reason,
+                        sample_context=match.sample_context,
+                    )
+                    session.add(abbrev_model)
+
+                session.commit()
+                return len(matches)
+
+            return 0
+
     # =========================================================================
     # Query Methods
     # =========================================================================
@@ -463,6 +590,7 @@ class LegalDocumentDB:
                 "points": session.query(LegalPointModel).count(),
                 "appendices": session.query(LegalAppendixModel).count(),
                 "appendix_items": session.query(LegalAppendixItemModel).count(),
+                "abbreviations": session.query(LegalAbbreviationModel).count(),
             }
 
     def link_to_kg(self, element_id: str, kg_node_id: str, element_type: str) -> bool:
@@ -496,6 +624,108 @@ class LegalDocumentDB:
                 session.commit()
                 return True
             return False
+
+    # =========================================================================
+    # Abbreviation Query Methods
+    # =========================================================================
+
+    def get_abbreviation(self, abbrev: str) -> Optional[LegalAbbreviationModel]:
+        """Get abbreviation by ID."""
+        with self.SessionLocal() as session:
+            result = session.get(LegalAbbreviationModel, abbrev)
+            if result:
+                session.expunge(result)
+            return result
+
+    def list_abbreviations(
+        self, category: Optional[str] = None, min_count: int = 0
+    ) -> List[LegalAbbreviationModel]:
+        """
+        List abbreviations with optional filters.
+
+        Args:
+            category: Filter by category (e.g., "corporate", "document_type")
+            min_count: Minimum corpus count
+
+        Returns:
+            List of abbreviations sorted by count descending
+        """
+        with self.SessionLocal() as session:
+            query = session.query(LegalAbbreviationModel)
+
+            if category:
+                query = query.filter(LegalAbbreviationModel.category == category)
+            if min_count > 0:
+                query = query.filter(LegalAbbreviationModel.corpus_count >= min_count)
+
+            query = query.order_by(LegalAbbreviationModel.corpus_count.desc())
+            results = query.all()
+
+            for r in results:
+                session.expunge(r)
+            return results
+
+    def get_abbreviation_full_form(self, abbrev: str) -> Optional[str]:
+        """Get full form of an abbreviation."""
+        result = self.get_abbreviation(abbrev)
+        return result.full_form if result else None
+
+    def update_abbreviation_full_form(
+        self, abbrev: str, full_form: str, category: Optional[str] = None
+    ) -> bool:
+        """
+        Update or set the full form of an abbreviation.
+
+        Args:
+            abbrev: Abbreviation to update
+            full_form: Full form to set
+            category: Optional category to set
+
+        Returns:
+            True if updated, False if abbreviation not found
+        """
+        with self.SessionLocal() as session:
+            result = session.get(LegalAbbreviationModel, abbrev)
+            if result:
+                result.full_form = full_form
+                if category:
+                    result.category = category
+                session.commit()
+                return True
+            return False
+
+    def get_abbreviation_stats(self) -> Dict[str, Any]:
+        """Get abbreviation statistics."""
+        with self.SessionLocal() as session:
+            total = session.query(LegalAbbreviationModel).count()
+            with_full_form = (
+                session.query(LegalAbbreviationModel)
+                .filter(LegalAbbreviationModel.full_form.isnot(None))
+                .count()
+            )
+
+            # Count by category
+            by_category = {}
+            categories = (
+                session.query(LegalAbbreviationModel.category)
+                .distinct()
+                .all()
+            )
+            for (cat,) in categories:
+                if cat:
+                    count = (
+                        session.query(LegalAbbreviationModel)
+                        .filter(LegalAbbreviationModel.category == cat)
+                        .count()
+                    )
+                    by_category[cat] = count
+
+            return {
+                "total": total,
+                "with_full_form": with_full_form,
+                "without_full_form": total - with_full_form,
+                "by_category": by_category,
+            }
 
 
 # =============================================================================

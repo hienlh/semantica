@@ -24,10 +24,11 @@ Build a Legal QA Chatbot for Vietnamese legal documents. System scrapes from thu
 | **01** | Legal Document Database | 3h | ✅ **Done** | SQLite, SQLAlchemy |
 | ~~02~~ | ~~Legal Document Parser~~ | ~~6h~~ | ⏭️ **Skip** | *(Scraper handles parsing)* |
 | **03** | CrossRef Detection | 2h | ✅ **Done** | Phase 01 |
-| **04** | Semantica Integration | 2h | 🔲 Pending | Phase 03 |
+| **03.5** | Data Quality Fix (scraper bug) | 1.5h | ✅ **Done** | Phase 03 |
+| **04** | Semantica Integration (KG/Ontology) | 12.5h | 🔲 Pending | Phase 03.5 (Step 0, 0.5 done) |
 | **05** | AI Chatbot (QA) | 3h | 🔲 Pending | Phase 04 |
 
-**Total: 14h** (remaining: ~5h)
+**Total: 26h** (remaining: ~15.5h)
 
 ## Architecture
 
@@ -84,8 +85,9 @@ Legal PDF/DOCX → FileIngestor → DoclingParser → LegalDocumentParser
 
 ## Validation Summary
 
-**Last Validated:** 2026-01-17
-**Status:** Phase 00 Done, Phase 01 Next
+**Last Validated:** 2026-01-18 11:45
+**Validated by:** `/plan:validate`
+**Status:** Phase 00-03.5 Done, Phase 04 Updated (Step 0/0.5 already done)
 
 ### Progress Tracking
 
@@ -94,8 +96,9 @@ Legal PDF/DOCX → FileIngestor → DoclingParser → LegalDocumentParser
 | Phase 00 | ✅ Done | 10 docs scraped (619+ articles) |
 | Phase 01 | ✅ Done | 615 articles, 2505 clauses, 1772 points in SQLite |
 | Phase 02 | ⏭️ Skip | Scraper handles parsing |
-| Phase 03 | ✅ Done | 168 cross-refs detected (132 resolved) |
-| Phase 04 | 🔲 Next | Semantica integration |
+| Phase 03 | ✅ Done | 168 cross-refs detected (132 resolved), NER skipped (YAGNI) |
+| Phase 03.5 | ✅ Done | Fixed `<huongdan>` stripping, re-parsed HTML, re-imported DB, crossref restored (168) |
+| Phase 04 | 🔲 Pending | Step 0 (skip), 0.5 (done) → NER→Relations→KG→Ontology |
 | Phase 05 | 🔲 Pending | AI Chatbot QA |
 
 ### Confirmed Decisions (2026-01-17)
@@ -107,6 +110,28 @@ Legal PDF/DOCX → FileIngestor → DoclingParser → LegalDocumentParser
 | Use Case | **QA Chatbot** (trả lời câu hỏi luật với citation) |
 | Citation format | Vietnamese: "Điều X, Khoản Y - Luật Z" |
 | Cross-ref | Must include law ID (strict) |
+| ID Format | **Hierarchical IDs** (human-readable, not UUID) |
+| Phase 03 NER | **Skip** (YAGNI - only crossref needed for QA chatbot) |
+| Abbreviations | **Keep original** (LLM understands), dictionary for search |
+| Normalization | **On-read** (preserve raw data in DB) |
+| Entity Types | Full extraction (8 types) for comprehensive QA |
+| CrossRef approach | Multi-hop (KG edges + context expansion) |
+| Accuracy tracking | Provenance + confidence scoring |
+
+### Implementation Notes (2026-01-17)
+
+**Phase 01 mở rộng hơn plan gốc:**
+- Thêm `LegalSectionModel` (Mục) - hierarchy level giữa Chương và Điều
+- Thêm `LegalAppendixModel` + `LegalAppendixItemModel` cho Phụ lục
+- Sử dụng **Hierarchical IDs** thay vì UUID:
+  - `59-2020-QH14:d5:k1:a` = Điểm a, Khoản 1, Điều 5, Luật 59/2020/QH14
+  - Dễ đọc, self-documenting, natural sort
+
+**Phase 03 đơn giản hóa theo YAGNI:**
+- Plan gốc: Full NER pipeline (entity_types, vn_preprocessor, pattern_ner, crossref_detector, ner_extractor)
+- Thực tế: Chỉ implement `crossref_detector.py` vì:
+  - QA chatbot chỉ cần cross-reference để link các điều khoản
+  - NER extraction có thể thêm sau nếu cần
 
 ### Scraped Data (Phase 00 Output)
 
@@ -119,11 +144,20 @@ Location: `./scraped_legal_docs/`
 | 16-2023-ND.json | Nghị định 16/2023 | - | - |
 | + 7 more | ... | - | - |
 
+### Implementation Files
+
+| Phase | Files Implemented |
+|-------|-------------------|
+| 00 | `scraper/base.py`, `scraper/tvpl.py`, `scraper/hierarchy_extractor.py` |
+| 01 | `models.py` (9 models), `db_manager.py`, `citation.py` |
+| 03 | `crossref_detector.py` |
+
 ## Phase Files
 
 - [Phase 00: Web Scraper](./phase-00-web-scraper.md) ✅ Done
 - [Phase 01: Legal Document Database](./phase-01-legal-document-database.md) ✅ Done
 - ~~[Phase 02: Legal Document Parser](./phase-02-legal-document-parser.md)~~ ⏭️ Skip
-- [Phase 03: CrossRef Detection](./phase-03-legal-entity-extraction.md) ✅ Done
-- [Phase 04: Semantica Integration](./phase-04-legal-kg-ontology.md) ← **Next**
+- [Phase 03: CrossRef Detection](./phase-03-legal-entity-extraction.md) ✅ Done (simplified)
+- [Phase 03.5: Data Quality Fix](./phase-03-5-legal-text-normalizer.md) ← **Planning**
+- [Phase 04: KG & Ontology](./phase-04-legal-kg-ontology.md)
 - [Phase 05: AI Chatbot](./phase-05-legal-graphrag-integration.md)

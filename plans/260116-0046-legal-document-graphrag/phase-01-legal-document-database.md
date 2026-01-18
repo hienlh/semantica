@@ -348,19 +348,38 @@ class LegalCitationFormatter:
 
 - [x] Create SQLAlchemy models in `semantica/legal/models.py`
 - [x] Implement `LegalDocumentDB` with auto-create tables
-- [x] Implement `store_from_scraper()` for Phase 00 integration
+- [x] Implement `store_document()` for Phase 00 integration
 - [x] Implement `LegalCitationFormatter`
-- [ ] Write unit tests for CRUD operations (deferred)
 - [x] Test import from Phase 00 scraped data (10 documents, 615 articles)
+- [ ] Write unit tests for CRUD operations (deferred)
+
+## Implementation Notes (2026-01-17)
+
+**Mở rộng hơn plan gốc:**
+
+1. **Thêm LegalSectionModel (Mục)** - hierarchy level giữa Chương và Điều
+2. **Thêm LegalAppendixModel + LegalAppendixItemModel** cho Phụ lục
+3. **Hierarchical IDs thay vì UUID:**
+   - Format: `{doc}:c{chap}:m{sec}:d{art}:k{clause}:{point}`
+   - Ví dụ: `59-2020-QH14:d5:k1:a` = Điểm a, Khoản 1, Điều 5
+   - Self-documenting, human-readable, natural sort
+4. **Duplicate handling:** Suffix `.N` cho elements trùng số (appendix edge case)
+5. **Cross-reference model** với hierarchical ID: `{source}→{target}#{idx}`
+
+**Files implemented:**
+- `models.py` - 9 models (Document, Chapter, Section, Article, Clause, Point, CrossRef, Appendix, AppendixItem)
+- `db_manager.py` - Full CRUD + JSON loader
+- `citation.py` - Vietnamese citation formatter
 
 ## Success Criteria
 
-- [x] All 7 tables created with proper FK relationships
-- [x] `store_from_scraper()` successfully imports Phase 00 LegalDocument
+- [x] All 9 tables created with proper FK relationships (expanded from 7)
+- [x] `store_document()` successfully imports Phase 00 LegalDocument
 - [x] Normalized tables store hierarchical data (no JSONB needed)
 - [x] kg_node_id columns ready for Phase 04
 - [x] Citation formatter produces "Điều X, Khoản Y" format
 - [x] Query performance <100ms for article lookup
+- [x] Hierarchical IDs human-readable and queryable
 
 ## Risk Assessment
 

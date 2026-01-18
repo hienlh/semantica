@@ -10,6 +10,7 @@ Components:
 - Database: LegalDocumentDB for CRUD operations (Phase 01)
 - Citation: Format legal citations (Phase 01)
 - CrossRef: Cross-reference detection (Phase 03)
+- Abbreviation: Vietnamese legal abbreviation extraction (Phase 03.5)
 """
 
 # Phase 00: Scraper
@@ -57,6 +58,16 @@ from .models import (
 # Phase 03: CrossRef Detection
 from .crossref_detector import CrossReference, CrossReferenceDetector, store_cross_references
 
+# Phase 03.5: Abbreviation Extraction
+from .abbreviation_extractor import (
+    AbbreviationExtractor,
+    AbbreviationMatch,
+    expand_search_terms,
+    get_full_form,
+    KNOWN_LEGAL_ABBREVIATIONS,
+)
+from .models import LegalAbbreviationModel
+
 __all__ = [
     # Phase 00: Scraper data classes
     "LegalDocument",
@@ -101,4 +112,11 @@ __all__ = [
     "CrossReferenceDetector",
     "CrossReference",
     "store_cross_references",
+    # Phase 03.5: Abbreviation Extraction
+    "AbbreviationExtractor",
+    "AbbreviationMatch",
+    "LegalAbbreviationModel",
+    "expand_search_terms",
+    "get_full_form",
+    "KNOWN_LEGAL_ABBREVIATIONS",
 ]
