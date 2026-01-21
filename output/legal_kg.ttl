@@ -1,0 +1,430 @@
+@prefix legal: <https://semantica.dev/legal/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+legal:ORGANIZATION_doanh_nghiệp a legal:ORGANIZATION ;
+    rdfs:label "doanh nghiệp" ;
+    legal:confidence 0.80 .
+
+legal:ACTION_thành_lập a legal:ACTION ;
+    rdfs:label "thành lập" ;
+    legal:confidence 0.80 .
+
+legal:ORGANIZATION_công_ty a legal:ORGANIZATION ;
+    rdfs:label "công ty" ;
+    legal:confidence 0.80 .
+
+legal:PERSON_ROLE_thành_viên a legal:PERSON_ROLE ;
+    rdfs:label "thành viên" ;
+    legal:confidence 0.80 .
+
+legal:ORGANIZATION_tổ_chức a legal:ORGANIZATION ;
+    rdfs:label "tổ chức" ;
+    legal:confidence 0.80 .
+
+legal:ORGANIZATION_cơ_quan a legal:ORGANIZATION ;
+    rdfs:label "Cơ quan" ;
+    legal:confidence 0.80 .
+
+legal:MONETARY_100%_vốn a legal:MONETARY ;
+    rdfs:label "100% vốn" ;
+    legal:confidence 0.80 .
+
+legal:LEGAL_TERM_điều_lệ a legal:LEGAL_TERM ;
+    rdfs:label "điều lệ" ;
+    legal:confidence 0.80 .
+
+legal:PERSON_ROLE_chủ_tịch_công_ty a legal:PERSON_ROLE ;
+    rdfs:label "Chủ tịch công ty" ;
+    legal:confidence 0.80 .
+
+legal:CONDITION_trường_hợp a legal:CONDITION ;
+    rdfs:label "Trường hợp" ;
+    legal:confidence 0.80 .
+
+legal:CONDITION_khi a legal:CONDITION ;
+    rdfs:label "khi" ;
+    legal:confidence 0.80 .
+
+legal:DURATION_01_tháng a legal:DURATION ;
+    rdfs:label "01 tháng" ;
+    legal:confidence 0.80 .
+
+legal:DURATION_9_năm a legal:DURATION ;
+    rdfs:label "9 năm" ;
+    legal:confidence 0.80 .
+
+legal:DURATION_19_tháng a legal:DURATION ;
+    rdfs:label "19 tháng" ;
+    legal:confidence 0.80 .
+
+legal:DURATION_3_năm a legal:DURATION ;
+    rdfs:label "3 năm" ;
+    legal:confidence 0.80 .
+
+legal:ORGANIZATION_chi_nhánh a legal:ORGANIZATION ;
+    rdfs:label "chi nhánh" ;
+    legal:confidence 0.80 .
+
+legal:ORGANIZATION_văn_phòng_đại_diện a legal:ORGANIZATION ;
+    rdfs:label "văn phòng đại diện" ;
+    legal:confidence 0.80 .
+
+legal:ACTION_đăng_ký a legal:ACTION ;
+    rdfs:label "đăng ký" ;
+    legal:confidence 0.80 .
+
+legal:DURATION_trong_thời_hạn_15_ngày a legal:DURATION ;
+    rdfs:label "Trong thời hạn 15 ngày" ;
+    legal:confidence 0.80 .
+
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp a legal:LEGAL_TERM ;
+    rdfs:label "Giấy chứng nhận đăng ký doanh nghiệp" ;
+    legal:confidence 0.80 .
+
+legal:DURATION_trong_thời_hạn_03_ngày a legal:DURATION ;
+    rdfs:label "Trong thời hạn 03 ngày" ;
+    legal:confidence 0.80 .
+
+legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật a legal:PERSON_ROLE ;
+    rdfs:label "người đại diện theo pháp luật" ;
+    legal:confidence 0.80 .
+
+legal:DURATION_02_năm a legal:DURATION ;
+    rdfs:label "02 năm" ;
+    legal:confidence 0.80 .
+
+legal:PERSON_ROLE_tgđ a legal:PERSON_ROLE ;
+    rdfs:label "TGĐ" ;
+    legal:confidence 0.95 .
+
+legal:LEGAL_TERM_quyền a legal:LEGAL_TERM ;
+    rdfs:label "quyền" ;
+    legal:confidence 0.80 .
+
+legal:LEGAL_TERM_nghĩa_vụ a legal:LEGAL_TERM ;
+    rdfs:label "nghĩa vụ" ;
+    legal:confidence 0.80 .
+
+legal:PERCENTAGE_toàn_bộ a legal:PERCENTAGE ;
+    rdfs:label "toàn bộ" ;
+    legal:confidence 0.80 .
+
+legal:LEGAL_TERM_hợp_đồng_lao_động a legal:LEGAL_TERM ;
+    rdfs:label "hợp đồng lao động" ;
+    legal:confidence 0.80 .
+
+legal:PENALTY_buộc a legal:PENALTY ;
+    rdfs:label "buộc" ;
+    legal:confidence 0.80 .
+
+legal:PENALTY_truy_cứu_trách_nhiệm_hình_sự a legal:PENALTY ;
+    rdfs:label "truy cứu trách nhiệm hình sự" ;
+    legal:confidence 0.80 .
+
+legal:PENALTY_cấm a legal:PENALTY ;
+    rdfs:label "cấm" ;
+    legal:confidence 0.80 .
+
+legal:CONDITION_nếu a legal:CONDITION ;
+    rdfs:label "nếu" ;
+    legal:confidence 0.80 .
+
+legal:DURATION_trong_thời_hạn_06_tháng a legal:DURATION ;
+    rdfs:label "trong thời hạn 06 tháng" ;
+    legal:confidence 0.80 .
+
+legal:LEGAL_TERM_biên_bản a legal:LEGAL_TERM ;
+    rdfs:label "Biên bản" ;
+    legal:confidence 0.80 .
+
+legal:DURATION_12_tháng a legal:DURATION ;
+    rdfs:label "12 tháng" ;
+    legal:confidence 0.80 .
+
+legal:ORGANIZATION_doanh_nghiệp legal:DEFINED_AS legal:ORGANIZATION_tổ_chức .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:ACTION_thành_lập legal:AUTHORIZED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:ORGANIZATION_doanh_nghiệp legal:DEFINED_AS legal:ORGANIZATION_doanh_nghiệp .
+legal:ORGANIZATION_doanh_nghiệp legal:DEFINED_AS legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_doanh_nghiệp legal:DEFINED_AS legal:PERSON_ROLE_thành_viên .
+legal:ORGANIZATION_cơ_quan legal:PERFORMED_BY legal:ACTION_thành_lập .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:ACTION_thành_lập .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:ACTION_thành_lập .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:PERSON_ROLE_thành_viên .
+legal:ACTION_thành_lập legal:AUTHORIZED_BY legal:MONETARY_100%_vốn .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:MONETARY_100%_vốn .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:LEGAL_TERM_điều_lệ .
+legal:PERSON_ROLE_thành_viên legal:AUTHORIZED_BY legal:MONETARY_100%_vốn .
+legal:PERSON_ROLE_thành_viên legal:AUTHORIZED_BY legal:LEGAL_TERM_điều_lệ .
+legal:PERSON_ROLE_thành_viên legal:DEFINED_AS legal:PERSON_ROLE_chủ_tịch_công_ty .
+legal:PERSON_ROLE_thành_viên legal:PERFORMED_BY legal:ACTION_thành_lập .
+legal:PERSON_ROLE_chủ_tịch_công_ty legal:AUTHORIZED_BY legal:ACTION_thành_lập .
+legal:ORGANIZATION_công_ty legal:DEFINED_AS legal:ORGANIZATION_tổ_chức .
+legal:PERSON_ROLE_thành_viên legal:DEFINED_AS legal:ORGANIZATION_tổ_chức .
+legal:PERSON_ROLE_thành_viên legal:DEFINED_AS legal:PERSON_ROLE_thành_viên .
+legal:CONDITION_trường_hợp legal:DEFINED_AS legal:ORGANIZATION_tổ_chức .
+legal:CONDITION_trường_hợp legal:DEFINED_AS legal:PERSON_ROLE_thành_viên .
+legal:CONDITION_trường_hợp legal:DEFINED_AS legal:PERSON_ROLE_chủ_tịch_công_ty .
+legal:CONDITION_trường_hợp legal:DEFINED_AS legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_công_ty legal:DEFINED_AS legal:PERSON_ROLE_thành_viên .
+legal:ORGANIZATION_công_ty legal:DEFINED_AS legal:PERSON_ROLE_chủ_tịch_công_ty .
+legal:ORGANIZATION_công_ty legal:DEFINED_AS legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:REFERENCES legal:DURATION_trong_thời_hạn_03_ngày .
+legal:ORGANIZATION_chi_nhánh legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_chi_nhánh legal:AUTHORIZED_BY legal:PERSON_ROLE_thành_viên .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:PERSON_ROLE_thành_viên .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:ACTION_đăng_ký .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:DURATION_trong_thời_hạn_15_ngày .
+legal:ORGANIZATION_chi_nhánh legal:AUTHORIZED_BY legal:DURATION_trong_thời_hạn_15_ngày .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:DURATION_trong_thời_hạn_15_ngày .
+legal:DURATION_trong_thời_hạn_15_ngày legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:DURATION_trong_thời_hạn_15_ngày legal:AUTHORIZED_BY legal:PERSON_ROLE_thành_viên .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:ORGANIZATION_cơ_quan .
+legal:ORGANIZATION_chi_nhánh legal:AUTHORIZED_BY legal:ORGANIZATION_cơ_quan .
+legal:ORGANIZATION_chi_nhánh legal:AUTHORIZED_BY legal:ACTION_đăng_ký .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:ORGANIZATION_cơ_quan .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:ORGANIZATION_chi_nhánh .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:ORGANIZATION_văn_phòng_đại_diện .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:DURATION_trong_thời_hạn_03_ngày .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:DURATION_trong_thời_hạn_03_ngày .
+legal:ORGANIZATION_chi_nhánh legal:AUTHORIZED_BY legal:DURATION_trong_thời_hạn_03_ngày .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:DURATION_trong_thời_hạn_03_ngày .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:DEFINED_AS legal:ORGANIZATION_cơ_quan .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:DEFINED_AS legal:ACTION_đăng_ký .
+legal:DURATION_trong_thời_hạn_03_ngày legal:DEFINED_AS legal:ORGANIZATION_cơ_quan .
+legal:DURATION_trong_thời_hạn_03_ngày legal:DEFINED_AS legal:ACTION_đăng_ký .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:ACTION_đăng_ký .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:CONDITION_trường_hợp .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:ACTION_đăng_ký .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:CONDITION_trường_hợp legal:AUTHORIZED_BY legal:ORGANIZATION_cơ_quan .
+legal:CONDITION_trường_hợp legal:AUTHORIZED_BY legal:ACTION_đăng_ký .
+legal:CONDITION_trường_hợp legal:AUTHORIZED_BY legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:ACTION_đăng_ký .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:CONDITION_trường_hợp .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:CONDITION_trường_hợp .
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp legal:AUTHORIZED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp legal:AUTHORIZED_BY legal:CONDITION_trường_hợp .
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp legal:AUTHORIZED_BY legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp legal:AUTHORIZED_BY legal:ACTION_đăng_ký .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:ORGANIZATION_chi_nhánh .
+legal:ORGANIZATION_chi_nhánh legal:AUTHORIZED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:REFERENCES legal:ORGANIZATION_cơ_quan .
+legal:ACTION_đăng_ký legal:REFERENCES legal:ORGANIZATION_cơ_quan .
+legal:ORGANIZATION_công_ty legal:REFERENCES legal:ACTION_đăng_ký .
+legal:ORGANIZATION_công_ty legal:AMENDS legal:ORGANIZATION_công_ty .
+legal:LEGAL_TERM_điều_lệ legal:AUTHORIZED_BY legal:MONETARY_100%_vốn .
+legal:LEGAL_TERM_điều_lệ legal:AUTHORIZED_BY legal:LEGAL_TERM_điều_lệ .
+legal:LEGAL_TERM_điều_lệ legal:AUTHORIZED_BY legal:ORGANIZATION_cơ_quan .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:ORGANIZATION_cơ_quan .
+legal:PERSON_ROLE_thành_viên legal:AUTHORIZED_BY legal:ORGANIZATION_cơ_quan .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_công_ty legal:DEFINED_AS legal:ORGANIZATION_cơ_quan .
+legal:ORGANIZATION_công_ty legal:DEFINED_AS legal:ACTION_đăng_ký .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:CONDITION_trường_hợp .
+legal:CONDITION_trường_hợp legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:ACTION_đăng_ký legal:INCLUDES legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp legal:INCLUDES legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật .
+legal:ORGANIZATION_chi_nhánh legal:AUTHORIZED_BY legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật .
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_chi_nhánh legal:AUTHORIZED_BY legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:PERSON_ROLE_thành_viên legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_chi_nhánh legal:INCLUDES legal:ORGANIZATION_văn_phòng_đại_diện .
+legal:ORGANIZATION_cơ_quan legal:DEFINED_AS legal:LEGAL_TERM_điều_lệ .
+legal:ORGANIZATION_cơ_quan legal:PERFORMED_BY legal:PERSON_ROLE_thành_viên .
+legal:ORGANIZATION_cơ_quan legal:PERFORMED_BY legal:LEGAL_TERM_điều_lệ .
+legal:PERSON_ROLE_thành_viên legal:DEFINED_AS legal:ORGANIZATION_công_ty .
+legal:PERSON_ROLE_chủ_tịch_công_ty legal:DEFINED_AS legal:ORGANIZATION_công_ty .
+legal:PERSON_ROLE_chủ_tịch_công_ty legal:DEFINED_AS legal:PERSON_ROLE_thành_viên .
+legal:PERSON_ROLE_chủ_tịch_công_ty legal:DEFINED_AS legal:MONETARY_100%_vốn .
+legal:PERSON_ROLE_chủ_tịch_công_ty legal:DEFINED_AS legal:LEGAL_TERM_điều_lệ .
+legal:ORGANIZATION_công_ty legal:DEFINED_AS legal:MONETARY_100%_vốn .
+legal:ORGANIZATION_công_ty legal:DEFINED_AS legal:LEGAL_TERM_điều_lệ .
+legal:ORGANIZATION_doanh_nghiệp legal:PERFORMED_BY legal:ACTION_thành_lập .
+legal:ACTION_thành_lập legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:ORGANIZATION_cơ_quan .
+legal:ACTION_thành_lập legal:DEFINED_AS legal:ORGANIZATION_công_ty .
+legal:ACTION_thành_lập legal:DEFINED_AS legal:ORGANIZATION_doanh_nghiệp .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:PERSON_ROLE_thành_viên .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:MONETARY_100%_vốn .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:LEGAL_TERM_điều_lệ .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:ACTION_thành_lập .
+legal:PERSON_ROLE_thành_viên legal:AUTHORIZED_BY legal:ACTION_thành_lập .
+legal:MONETARY_100%_vốn legal:DEFINED_AS legal:ORGANIZATION_công_ty .
+legal:LEGAL_TERM_điều_lệ legal:DEFINED_AS legal:ORGANIZATION_công_ty .
+legal:LEGAL_TERM_điều_lệ legal:DEFINED_AS legal:ORGANIZATION_tổ_chức .
+legal:ACTION_thành_lập legal:DEFINED_AS legal:ORGANIZATION_tổ_chức .
+legal:MONETARY_100%_vốn legal:DEFINED_AS legal:ORGANIZATION_tổ_chức .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:PERSON_ROLE_thành_viên legal:AUTHORIZED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:PERSON_ROLE_thành_viên legal:AUTHORIZED_BY legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:MONETARY_100%_vốn legal:AUTHORIZED_BY legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:LEGAL_TERM_điều_lệ legal:AUTHORIZED_BY legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp legal:APPLIES_TO legal:LEGAL_TERM_quyền .
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp legal:APPLIES_TO legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_doanh_nghiệp legal:DEFINED_AS legal:LEGAL_TERM_nghĩa_vụ .
+legal:LEGAL_TERM_quyền legal:DEFINED_AS legal:LEGAL_TERM_quyền .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:LEGAL_TERM_quyền .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:LEGAL_TERM_nghĩa_vụ .
+legal:ORGANIZATION_công_ty legal:PERFORMED_BY legal:ORGANIZATION_chi_nhánh .
+legal:ORGANIZATION_doanh_nghiệp legal:PERFORMED_BY legal:LEGAL_TERM_nghĩa_vụ .
+legal:ORGANIZATION_doanh_nghiệp legal:PERFORMED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:ACTION_đăng_ký legal:PERFORMED_BY legal:ORGANIZATION_cơ_quan .
+legal:PERCENTAGE_toàn_bộ legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:PERCENTAGE_toàn_bộ legal:AUTHORIZED_BY legal:ORGANIZATION_tổ_chức .
+legal:ORGANIZATION_tổ_chức legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_tổ_chức legal:AUTHORIZED_BY legal:PERSON_ROLE_thành_viên .
+legal:LEGAL_TERM_nghĩa_vụ legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_chi_nhánh legal:AUTHORIZED_BY legal:PERCENTAGE_toàn_bộ .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:PERCENTAGE_toàn_bộ .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:LEGAL_TERM_quyền .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:LEGAL_TERM_nghĩa_vụ .
+legal:LEGAL_TERM_quyền legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:LEGAL_TERM_nghĩa_vụ .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:LEGAL_TERM_nghĩa_vụ .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:LEGAL_TERM_quyền .
+legal:LEGAL_TERM_nghĩa_vụ legal:AUTHORIZED_BY legal:LEGAL_TERM_quyền .
+legal:ORGANIZATION_công_ty legal:DEFINED_AS legal:LEGAL_TERM_quyền .
+legal:PERSON_ROLE_thành_viên legal:DEFINED_AS legal:ORGANIZATION_cơ_quan .
+legal:PERSON_ROLE_thành_viên legal:DEFINED_AS legal:LEGAL_TERM_quyền .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:PENALTY_buộc .
+legal:ORGANIZATION_doanh_nghiệp legal:REQUIRES legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:ORGANIZATION_doanh_nghiệp legal:REQUIRES legal:ACTION_đăng_ký .
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp legal:APPLIES_TO legal:ACTION_đăng_ký .
+legal:ACTION_đăng_ký legal:APPLIES_TO legal:ACTION_đăng_ký .
+legal:LEGAL_TERM_quyền legal:DEFINED_AS legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật .
+legal:LEGAL_TERM_quyền legal:DEFINED_AS legal:ORGANIZATION_doanh_nghiệp .
+legal:ACTION_đăng_ký legal:DEFINED_AS legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật .
+legal:ACTION_đăng_ký legal:DEFINED_AS legal:ORGANIZATION_doanh_nghiệp .
+legal:ACTION_đăng_ký legal:DEFINED_AS legal:LEGAL_TERM_quyền .
+legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật legal:AUTHORIZED_BY legal:LEGAL_TERM_quyền .
+legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật legal:AUTHORIZED_BY legal:ACTION_đăng_ký .
+legal:LEGAL_TERM_quyền legal:AUTHORIZED_BY legal:ACTION_đăng_ký .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:CONDITION_khi .
+legal:CONDITION_khi legal:AUTHORIZED_BY legal:ORGANIZATION_cơ_quan .
+legal:CONDITION_khi legal:AUTHORIZED_BY legal:ACTION_đăng_ký .
+legal:CONDITION_khi legal:AUTHORIZED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:PERSON_ROLE_thành_viên .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:PERSON_ROLE_thành_viên .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:ORGANIZATION_tổ_chức .
+legal:PERSON_ROLE_thành_viên legal:AUTHORIZED_BY legal:ORGANIZATION_tổ_chức .
+legal:ORGANIZATION_công_ty legal:PERFORMED_BY legal:LEGAL_TERM_nghĩa_vụ .
+legal:LEGAL_TERM_quyền legal:DEFINED_AS legal:ACTION_đăng_ký .
+legal:ORGANIZATION_cơ_quan legal:PERFORMED_BY legal:ACTION_đăng_ký .
+legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật legal:DEFINED_AS legal:ORGANIZATION_doanh_nghiệp .
+legal:CONDITION_nếu legal:DEFINED_AS legal:LEGAL_TERM_điều_lệ .
+legal:ORGANIZATION_cơ_quan legal:INCLUDES legal:LEGAL_TERM_điều_lệ .
+legal:PERCENTAGE_toàn_bộ legal:INCLUDES legal:LEGAL_TERM_quyền .
+legal:LEGAL_TERM_điều_lệ legal:REFERENCES legal:MONETARY_100%_vốn .
+legal:LEGAL_TERM_quyền legal:REFERENCES legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_công_ty legal:AMENDS legal:ORGANIZATION_cơ_quan .
+legal:CONDITION_nếu legal:AUTHORIZED_BY legal:LEGAL_TERM_điều_lệ .
+legal:LEGAL_TERM_điều_lệ legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:PERCENTAGE_toàn_bộ legal:AUTHORIZED_BY legal:LEGAL_TERM_quyền .
+legal:CONDITION_nếu legal:PERFORMED_BY legal:LEGAL_TERM_điều_lệ .
+legal:ORGANIZATION_công_ty legal:PERFORMED_BY legal:LEGAL_TERM_điều_lệ .
+legal:LEGAL_TERM_điều_lệ legal:PERFORMED_BY legal:ORGANIZATION_cơ_quan .
+legal:LEGAL_TERM_điều_lệ legal:PERFORMED_BY legal:ACTION_đăng_ký .
+legal:PENALTY_cấm legal:DEFINED_AS legal:ORGANIZATION_cơ_quan .
+legal:PENALTY_cấm legal:DEFINED_AS legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật .
+legal:ORGANIZATION_cơ_quan legal:DEFINED_AS legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật .
+legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật legal:DEFINED_AS legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật .
+legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật legal:DEFINED_AS legal:ORGANIZATION_cơ_quan .
+legal:LEGAL_TERM_quyền legal:AUTHORIZED_BY legal:ORGANIZATION_chi_nhánh .
+legal:LEGAL_TERM_quyền legal:AUTHORIZED_BY legal:ORGANIZATION_văn_phòng_đại_diện .
+legal:ORGANIZATION_chi_nhánh legal:AUTHORIZED_BY legal:CONDITION_nếu .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:CONDITION_nếu .
+legal:ORGANIZATION_cơ_quan legal:DEFINED_AS legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_cơ_quan legal:DEFINED_AS legal:PERSON_ROLE_thành_viên .
+legal:PERSON_ROLE_thành_viên legal:AUTHORIZED_BY legal:LEGAL_TERM_quyền .
+legal:PERSON_ROLE_thành_viên legal:AUTHORIZED_BY legal:LEGAL_TERM_nghĩa_vụ .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:LEGAL_TERM_quyền .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:DURATION_trong_thời_hạn_06_tháng .
+legal:PERSON_ROLE_thành_viên legal:AUTHORIZED_BY legal:DURATION_trong_thời_hạn_06_tháng .
+legal:PERSON_ROLE_thành_viên legal:AUTHORIZED_BY legal:ACTION_đăng_ký .
+legal:LEGAL_TERM_quyền legal:AUTHORIZED_BY legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:DURATION_trong_thời_hạn_06_tháng legal:AUTHORIZED_BY legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp .
+legal:DURATION_trong_thời_hạn_06_tháng legal:AUTHORIZED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:LEGAL_TERM_quyền .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:LEGAL_TERM_nghĩa_vụ .
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp legal:AUTHORIZED_BY legal:LEGAL_TERM_quyền .
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp legal:AUTHORIZED_BY legal:LEGAL_TERM_nghĩa_vụ .
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp legal:AUTHORIZED_BY legal:ORGANIZATION_cơ_quan .
+legal:LEGAL_TERM_nghĩa_vụ legal:AUTHORIZED_BY legal:MONETARY_100%_vốn .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:MONETARY_100%_vốn .
+legal:ORGANIZATION_cơ_quan legal:AUTHORIZED_BY legal:LEGAL_TERM_điều_lệ .
+legal:LEGAL_TERM_quyền legal:AUTHORIZED_BY legal:MONETARY_100%_vốn .
+legal:LEGAL_TERM_quyền legal:AUTHORIZED_BY legal:LEGAL_TERM_điều_lệ .
+legal:ORGANIZATION_cơ_quan legal:REQUIRES legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_cơ_quan legal:REQUIRES legal:PERSON_ROLE_thành_viên .
+legal:ORGANIZATION_cơ_quan legal:REQUIRES legal:MONETARY_100%_vốn .
+legal:ORGANIZATION_tổ_chức legal:AUTHORIZED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:ORGANIZATION_chi_nhánh .
+legal:ORGANIZATION_doanh_nghiệp legal:AUTHORIZED_BY legal:ORGANIZATION_văn_phòng_đại_diện .
+legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật legal:AUTHORIZED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:LEGAL_TERM_biên_bản .
+legal:DURATION_12_tháng legal:AUTHORIZED_BY legal:ORGANIZATION_cơ_quan .
+legal:MONETARY_100%_vốn legal:AUTHORIZED_BY legal:LEGAL_TERM_quyền .
+legal:MONETARY_100%_vốn legal:AUTHORIZED_BY legal:LEGAL_TERM_nghĩa_vụ .
+legal:MONETARY_100%_vốn legal:AUTHORIZED_BY legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật .
+legal:LEGAL_TERM_điều_lệ legal:AUTHORIZED_BY legal:LEGAL_TERM_quyền .
+legal:LEGAL_TERM_điều_lệ legal:AUTHORIZED_BY legal:LEGAL_TERM_nghĩa_vụ .
+legal:LEGAL_TERM_điều_lệ legal:AUTHORIZED_BY legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:MONETARY_100%_vốn .
+legal:ACTION_đăng_ký legal:AUTHORIZED_BY legal:LEGAL_TERM_điều_lệ .
+legal:PERSON_ROLE_thành_viên legal:AUTHORIZED_BY legal:PERCENTAGE_toàn_bộ .
+legal:ORGANIZATION_cơ_quan legal:AMENDS legal:CONDITION_trường_hợp .
+legal:LEGAL_TERM_điều_lệ legal:PERFORMED_BY legal:MONETARY_100%_vốn .
+legal:CONDITION_nếu legal:DEFINED_AS legal:ACTION_đăng_ký .
+legal:CONDITION_nếu legal:AUTHORIZED_BY legal:ACTION_đăng_ký .
+legal:LEGAL_TERM_quyền legal:AUTHORIZED_BY legal:LEGAL_TERM_quyền .
+legal:LEGAL_TERM_quyền legal:PERFORMED_BY legal:LEGAL_TERM_quyền .
+legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật legal:AUTHORIZED_BY legal:LEGAL_TERM_điều_lệ .
+legal:ORGANIZATION_cơ_quan legal:PERFORMED_BY legal:ORGANIZATION_doanh_nghiệp .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:PERCENTAGE_toàn_bộ .
+legal:ORGANIZATION_công_ty legal:REFERENCES legal:LEGAL_TERM_nghĩa_vụ .
+legal:LEGAL_TERM_biên_bản legal:DEFINED_AS legal:CONDITION_nếu .
+legal:ORGANIZATION_công_ty legal:INCLUDES legal:PERSON_ROLE_chủ_tịch_công_ty .
+legal:PERSON_ROLE_thành_viên legal:REFERENCES legal:ORGANIZATION_công_ty .
+legal:LEGAL_TERM_quyền legal:REFERENCES legal:LEGAL_TERM_nghĩa_vụ .
+legal:LEGAL_TERM_điều_lệ legal:AMENDS legal:MONETARY_100%_vốn .
+legal:ORGANIZATION_công_ty legal:AUTHORIZED_BY legal:ORGANIZATION_chi_nhánh .
+legal:LEGAL_TERM_biên_bản legal:AUTHORIZED_BY legal:CONDITION_nếu .
+legal:LEGAL_TERM_biên_bản legal:PERFORMED_BY legal:CONDITION_nếu .
+legal:PENALTY_cấm legal:DEFINED_AS legal:PERSON_ROLE_thành_viên .
+legal:PENALTY_cấm legal:DEFINED_AS legal:PERSON_ROLE_chủ_tịch_công_ty .
+legal:PENALTY_cấm legal:DEFINED_AS legal:ORGANIZATION_công_ty .
+legal:PERSON_ROLE_chủ_tịch_công_ty legal:DEFINED_AS legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật .
+legal:ORGANIZATION_công_ty legal:DEFINED_AS legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật .
+legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật legal:DEFINED_AS legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_doanh_nghiệp legal:DEFINED_AS legal:PERSON_ROLE_người_đại_diện_theo_pháp_luật .
+legal:ORGANIZATION_doanh_nghiệp legal:DEFINED_AS legal:ACTION_đăng_ký .
+legal:ORGANIZATION_công_ty legal:APPLIES_TO legal:ORGANIZATION_công_ty .
+legal:LEGAL_TERM_quyền legal:APPLIES_TO legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_công_ty legal:APPLIES_TO legal:ORGANIZATION_chi_nhánh .
+legal:ORGANIZATION_công_ty legal:APPLIES_TO legal:ORGANIZATION_văn_phòng_đại_diện .
+legal:ORGANIZATION_văn_phòng_đại_diện legal:AUTHORIZED_BY legal:LEGAL_TERM_biên_bản .
+legal:LEGAL_TERM_biên_bản legal:AUTHORIZED_BY legal:PERSON_ROLE_thành_viên .
+legal:LEGAL_TERM_biên_bản legal:AUTHORIZED_BY legal:PERSON_ROLE_chủ_tịch_công_ty .
+legal:LEGAL_TERM_biên_bản legal:AUTHORIZED_BY legal:ORGANIZATION_công_ty .
+legal:LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp legal:AUTHORIZED_BY legal:PERSON_ROLE_thành_viên .
+legal:LEGAL_TERM_nghĩa_vụ legal:AUTHORIZED_BY legal:LEGAL_TERM_điều_lệ .
+legal:ORGANIZATION_chi_nhánh legal:AUTHORIZED_BY legal:LEGAL_TERM_biên_bản .
+legal:ORGANIZATION_công_ty legal:PERFORMED_BY legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_công_ty legal:REFERENCES legal:ORGANIZATION_công_ty .
+legal:ORGANIZATION_doanh_nghiệp legal:REFERENCES legal:ORGANIZATION_doanh_nghiệp .

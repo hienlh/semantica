@@ -11,6 +11,8 @@ Components:
 - Citation: Format legal citations (Phase 01)
 - CrossRef: Cross-reference detection (Phase 03)
 - Abbreviation: Vietnamese legal abbreviation extraction (Phase 03.5)
+- Knowledge Graph: Entity/relation extraction and KG building (Phase 04)
+- Ontology: OWL ontology generation for legal domain (Phase 04)
 """
 
 # Phase 00: Scraper
@@ -68,10 +70,20 @@ from .abbreviation_extractor import (
 )
 from .models import LegalAbbreviationModel
 
-# Phase 04: KG Pipeline
-from .entity_types import LEGAL_ENTITY_TYPES, LEGAL_NER_PROMPT_VI, LEGAL_ABBREVIATIONS
+# Phase 04: Knowledge Graph & Ontology (enum-based)
+from .entity_types import (
+    ABBREVIATION_TO_ENTITY_TYPE,
+    ENTITY_PATTERNS,
+    LEGAL_ENTITY_TYPES,
+    LegalEntityType,
+    LEGAL_ABBREVIATIONS,
+    LEGAL_NER_PROMPT_VI,
+)
 from .relation_types import (
+    INVERSE_RELATIONS,
     LEGAL_RELATION_TYPES,
+    LegalRelationType,
+    RELATION_PATTERNS,
     LEGAL_RELATION_TYPES_SET,
     LEGAL_RELATION_TYPES_GENERIC,
     LEGAL_RELATION_TYPES_DOMAIN,
@@ -81,6 +93,28 @@ from .relation_types import (
     LEGAL_RELATION_COT_PROMPT_VI,
     LEGAL_RELATION_PATTERNS,
 )
+from .ner_extractor import LegalEntity, LegalNERExtractor
+from .relation_extractor import LegalRelation, LegalRelationExtractor
+from .kg_builder import (
+    KGEdge,
+    KGNode,
+    LegalKGBuilder,
+    LegalKnowledgeGraph,
+)
+from .ontology_generator import (
+    LegalOntology,
+    LegalOntologyGenerator,
+    OntologyClass,
+    OntologyProperty,
+)
+from .kg_linker import KGSQLiteLinker
+from .pipeline import (
+    LegalSemanticaPipeline,
+    PipelineConfig,
+    PipelineResult,
+)
+
+# Phase 04: Relation Validation & Entity Resolution
 from .relation_validator import RelationValidator, SEMANTIC_TYPE_RULES
 from .entity_resolver import EntityResolver
 from .kg_pipeline import VietnameseLegalPipeline
@@ -136,21 +170,51 @@ __all__ = [
     "expand_search_terms",
     "get_full_form",
     "KNOWN_LEGAL_ABBREVIATIONS",
-    # Phase 04: KG Pipeline
-    "VietnameseLegalPipeline",
-    "RelationValidator",
-    "EntityResolver",
-    "SEMANTIC_TYPE_RULES",
+    # Phase 04: Entity Types
+    "LegalEntityType",
     "LEGAL_ENTITY_TYPES",
+    "ENTITY_PATTERNS",
+    "ABBREVIATION_TO_ENTITY_TYPE",
+    "LEGAL_ABBREVIATIONS",
+    "LEGAL_NER_PROMPT_VI",
+    # Phase 04: Relation Types
+    "LegalRelationType",
     "LEGAL_RELATION_TYPES",
     "LEGAL_RELATION_TYPES_SET",
     "LEGAL_RELATION_TYPES_GENERIC",
     "LEGAL_RELATION_TYPES_DOMAIN",
     "LEGAL_RELATION_TRIGGERS",
-    "LEGAL_NER_PROMPT_VI",
+    "RELATION_PATTERNS",
+    "INVERSE_RELATIONS",
     "LEGAL_RELATION_PROMPT_VI",
     "LEGAL_RELATION_FREE_PROMPT_VI",
     "LEGAL_RELATION_COT_PROMPT_VI",
     "LEGAL_RELATION_PATTERNS",
-    "LEGAL_ABBREVIATIONS",
+    # Phase 04: NER Extraction
+    "LegalEntity",
+    "LegalNERExtractor",
+    # Phase 04: Relation Extraction
+    "LegalRelation",
+    "LegalRelationExtractor",
+    # Phase 04: Knowledge Graph
+    "KGNode",
+    "KGEdge",
+    "LegalKnowledgeGraph",
+    "LegalKGBuilder",
+    # Phase 04: Ontology
+    "OntologyClass",
+    "OntologyProperty",
+    "LegalOntology",
+    "LegalOntologyGenerator",
+    # Phase 04: KG-SQLite Linker
+    "KGSQLiteLinker",
+    # Phase 04: Pipeline
+    "PipelineConfig",
+    "PipelineResult",
+    "LegalSemanticaPipeline",
+    # Phase 04: Validation & Resolution
+    "RelationValidator",
+    "EntityResolver",
+    "SEMANTIC_TYPE_RULES",
+    "VietnameseLegalPipeline",
 ]

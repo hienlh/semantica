@@ -1,0 +1,1003 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+  <key id="d0" for="node" attr.name="label" attr.type="string"/>
+  <key id="d1" for="node" attr.name="type" attr.type="string"/>
+  <key id="d2" for="edge" attr.name="type" attr.type="string"/>
+  <graph id="G" edgedefault="directed">
+    <node id="ORGANIZATION_doanh_nghiệp">
+      <data key="d0">doanh nghiệp</data>
+      <data key="d1">ORGANIZATION</data>
+    </node>
+    <node id="ACTION_thành_lập">
+      <data key="d0">thành lập</data>
+      <data key="d1">ACTION</data>
+    </node>
+    <node id="ORGANIZATION_công_ty">
+      <data key="d0">công ty</data>
+      <data key="d1">ORGANIZATION</data>
+    </node>
+    <node id="PERSON_ROLE_thành_viên">
+      <data key="d0">thành viên</data>
+      <data key="d1">PERSON_ROLE</data>
+    </node>
+    <node id="ORGANIZATION_tổ_chức">
+      <data key="d0">tổ chức</data>
+      <data key="d1">ORGANIZATION</data>
+    </node>
+    <node id="ORGANIZATION_cơ_quan">
+      <data key="d0">Cơ quan</data>
+      <data key="d1">ORGANIZATION</data>
+    </node>
+    <node id="MONETARY_100%_vốn">
+      <data key="d0">100% vốn</data>
+      <data key="d1">MONETARY</data>
+    </node>
+    <node id="LEGAL_TERM_điều_lệ">
+      <data key="d0">điều lệ</data>
+      <data key="d1">LEGAL_TERM</data>
+    </node>
+    <node id="PERSON_ROLE_chủ_tịch_công_ty">
+      <data key="d0">Chủ tịch công ty</data>
+      <data key="d1">PERSON_ROLE</data>
+    </node>
+    <node id="CONDITION_trường_hợp">
+      <data key="d0">Trường hợp</data>
+      <data key="d1">CONDITION</data>
+    </node>
+    <node id="CONDITION_khi">
+      <data key="d0">khi</data>
+      <data key="d1">CONDITION</data>
+    </node>
+    <node id="DURATION_01_tháng">
+      <data key="d0">01 tháng</data>
+      <data key="d1">DURATION</data>
+    </node>
+    <node id="DURATION_9_năm">
+      <data key="d0">9 năm</data>
+      <data key="d1">DURATION</data>
+    </node>
+    <node id="DURATION_19_tháng">
+      <data key="d0">19 tháng</data>
+      <data key="d1">DURATION</data>
+    </node>
+    <node id="DURATION_3_năm">
+      <data key="d0">3 năm</data>
+      <data key="d1">DURATION</data>
+    </node>
+    <node id="ORGANIZATION_chi_nhánh">
+      <data key="d0">chi nhánh</data>
+      <data key="d1">ORGANIZATION</data>
+    </node>
+    <node id="ORGANIZATION_văn_phòng_đại_diện">
+      <data key="d0">văn phòng đại diện</data>
+      <data key="d1">ORGANIZATION</data>
+    </node>
+    <node id="ACTION_đăng_ký">
+      <data key="d0">đăng ký</data>
+      <data key="d1">ACTION</data>
+    </node>
+    <node id="DURATION_trong_thời_hạn_15_ngày">
+      <data key="d0">Trong thời hạn 15 ngày</data>
+      <data key="d1">DURATION</data>
+    </node>
+    <node id="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d0">Giấy chứng nhận đăng ký doanh nghiệp</data>
+      <data key="d1">LEGAL_TERM</data>
+    </node>
+    <node id="DURATION_trong_thời_hạn_03_ngày">
+      <data key="d0">Trong thời hạn 03 ngày</data>
+      <data key="d1">DURATION</data>
+    </node>
+    <node id="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d0">người đại diện theo pháp luật</data>
+      <data key="d1">PERSON_ROLE</data>
+    </node>
+    <node id="DURATION_02_năm">
+      <data key="d0">02 năm</data>
+      <data key="d1">DURATION</data>
+    </node>
+    <node id="PERSON_ROLE_tgđ">
+      <data key="d0">TGĐ</data>
+      <data key="d1">PERSON_ROLE</data>
+    </node>
+    <node id="LEGAL_TERM_quyền">
+      <data key="d0">quyền</data>
+      <data key="d1">LEGAL_TERM</data>
+    </node>
+    <node id="LEGAL_TERM_nghĩa_vụ">
+      <data key="d0">nghĩa vụ</data>
+      <data key="d1">LEGAL_TERM</data>
+    </node>
+    <node id="PERCENTAGE_toàn_bộ">
+      <data key="d0">toàn bộ</data>
+      <data key="d1">PERCENTAGE</data>
+    </node>
+    <node id="LEGAL_TERM_hợp_đồng_lao_động">
+      <data key="d0">hợp đồng lao động</data>
+      <data key="d1">LEGAL_TERM</data>
+    </node>
+    <node id="PENALTY_buộc">
+      <data key="d0">buộc</data>
+      <data key="d1">PENALTY</data>
+    </node>
+    <node id="PENALTY_truy_cứu_trách_nhiệm_hình_sự">
+      <data key="d0">truy cứu trách nhiệm hình sự</data>
+      <data key="d1">PENALTY</data>
+    </node>
+    <node id="PENALTY_cấm">
+      <data key="d0">cấm</data>
+      <data key="d1">PENALTY</data>
+    </node>
+    <node id="CONDITION_nếu">
+      <data key="d0">nếu</data>
+      <data key="d1">CONDITION</data>
+    </node>
+    <node id="DURATION_trong_thời_hạn_06_tháng">
+      <data key="d0">trong thời hạn 06 tháng</data>
+      <data key="d1">DURATION</data>
+    </node>
+    <node id="LEGAL_TERM_biên_bản">
+      <data key="d0">Biên bản</data>
+      <data key="d1">LEGAL_TERM</data>
+    </node>
+    <node id="DURATION_12_tháng">
+      <data key="d0">12 tháng</data>
+      <data key="d1">DURATION</data>
+    </node>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ORGANIZATION_tổ_chức">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_thành_lập" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ORGANIZATION_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="PERSON_ROLE_thành_viên">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="ACTION_thành_lập">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="ACTION_thành_lập">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ACTION_thành_lập">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="PERSON_ROLE_thành_viên">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_thành_lập" target="MONETARY_100%_vốn">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="MONETARY_100%_vốn">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="MONETARY_100%_vốn">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="PERSON_ROLE_chủ_tịch_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="ACTION_thành_lập">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_chủ_tịch_công_ty" target="ACTION_thành_lập">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_tổ_chức">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="ORGANIZATION_tổ_chức">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="PERSON_ROLE_thành_viên">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="CONDITION_trường_hợp" target="ORGANIZATION_tổ_chức">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="CONDITION_trường_hợp" target="PERSON_ROLE_thành_viên">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="CONDITION_trường_hợp" target="PERSON_ROLE_chủ_tịch_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="CONDITION_trường_hợp" target="ORGANIZATION_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="PERSON_ROLE_thành_viên">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="PERSON_ROLE_chủ_tịch_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="DURATION_trong_thời_hạn_03_ngày">
+      <data key="d2">REFERENCES</data>
+    </edge>
+    <edge source="ORGANIZATION_chi_nhánh" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_chi_nhánh" target="PERSON_ROLE_thành_viên">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="PERSON_ROLE_thành_viên">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="ACTION_đăng_ký">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="DURATION_trong_thời_hạn_15_ngày">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_chi_nhánh" target="DURATION_trong_thời_hạn_15_ngày">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="DURATION_trong_thời_hạn_15_ngày">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="DURATION_trong_thời_hạn_15_ngày" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="DURATION_trong_thời_hạn_15_ngày" target="PERSON_ROLE_thành_viên">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="ORGANIZATION_cơ_quan">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_chi_nhánh" target="ORGANIZATION_cơ_quan">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_chi_nhánh" target="ACTION_đăng_ký">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="ORGANIZATION_cơ_quan">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="ORGANIZATION_chi_nhánh">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="ORGANIZATION_văn_phòng_đại_diện">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="DURATION_trong_thời_hạn_03_ngày">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="DURATION_trong_thời_hạn_03_ngày">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_chi_nhánh" target="DURATION_trong_thời_hạn_03_ngày">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="DURATION_trong_thời_hạn_03_ngày">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="ORGANIZATION_cơ_quan">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="ACTION_đăng_ký">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="DURATION_trong_thời_hạn_03_ngày" target="ORGANIZATION_cơ_quan">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="DURATION_trong_thời_hạn_03_ngày" target="ACTION_đăng_ký">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="ACTION_đăng_ký">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="CONDITION_trường_hợp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="ACTION_đăng_ký">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="CONDITION_trường_hợp" target="ORGANIZATION_cơ_quan">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="CONDITION_trường_hợp" target="ACTION_đăng_ký">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="CONDITION_trường_hợp" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ACTION_đăng_ký">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="CONDITION_trường_hợp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="CONDITION_trường_hợp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp" target="CONDITION_trường_hợp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp" target="ACTION_đăng_ký">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="ORGANIZATION_chi_nhánh">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_chi_nhánh" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="ORGANIZATION_cơ_quan">
+      <data key="d2">REFERENCES</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="ORGANIZATION_cơ_quan">
+      <data key="d2">REFERENCES</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ACTION_đăng_ký">
+      <data key="d2">REFERENCES</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_công_ty">
+      <data key="d2">AMENDS</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="MONETARY_100%_vốn">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="ORGANIZATION_cơ_quan">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_cơ_quan">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="ORGANIZATION_cơ_quan">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_cơ_quan">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ACTION_đăng_ký">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="CONDITION_trường_hợp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="CONDITION_trường_hợp" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">INCLUDES</data>
+    </edge>
+    <edge source="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">INCLUDES</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_chi_nhánh" target="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_chi_nhánh" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_chi_nhánh" target="ORGANIZATION_văn_phòng_đại_diện">
+      <data key="d2">INCLUDES</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="PERSON_ROLE_thành_viên">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="ORGANIZATION_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_chủ_tịch_công_ty" target="ORGANIZATION_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_chủ_tịch_công_ty" target="PERSON_ROLE_thành_viên">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_chủ_tịch_công_ty" target="MONETARY_100%_vốn">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_chủ_tịch_công_ty" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="MONETARY_100%_vốn">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ACTION_thành_lập">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="ACTION_thành_lập" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ORGANIZATION_cơ_quan">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_thành_lập" target="ORGANIZATION_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ACTION_thành_lập" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="PERSON_ROLE_thành_viên">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="MONETARY_100%_vốn">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ACTION_thành_lập">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="ACTION_thành_lập">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="MONETARY_100%_vốn" target="ORGANIZATION_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="ORGANIZATION_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="ORGANIZATION_tổ_chức">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ACTION_thành_lập" target="ORGANIZATION_tổ_chức">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="MONETARY_100%_vốn" target="ORGANIZATION_tổ_chức">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="MONETARY_100%_vốn" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp" target="LEGAL_TERM_quyền">
+      <data key="d2">APPLIES_TO</data>
+    </edge>
+    <edge source="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp" target="ORGANIZATION_công_ty">
+      <data key="d2">APPLIES_TO</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="LEGAL_TERM_quyền">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="LEGAL_TERM_quyền">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_chi_nhánh">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="ORGANIZATION_cơ_quan">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="PERCENTAGE_toàn_bộ" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERCENTAGE_toàn_bộ" target="ORGANIZATION_tổ_chức">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_tổ_chức" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_tổ_chức" target="PERSON_ROLE_thành_viên">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_nghĩa_vụ" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_chi_nhánh" target="PERCENTAGE_toàn_bộ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="PERCENTAGE_toàn_bộ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="LEGAL_TERM_quyền">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="LEGAL_TERM_quyền">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_nghĩa_vụ" target="LEGAL_TERM_quyền">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="LEGAL_TERM_quyền">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="ORGANIZATION_cơ_quan">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="LEGAL_TERM_quyền">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="PENALTY_buộc">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">REQUIRES</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ACTION_đăng_ký">
+      <data key="d2">REQUIRES</data>
+    </edge>
+    <edge source="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp" target="ACTION_đăng_ký">
+      <data key="d2">APPLIES_TO</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="ACTION_đăng_ký">
+      <data key="d2">APPLIES_TO</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="LEGAL_TERM_quyền">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_người_đại_diện_theo_pháp_luật" target="LEGAL_TERM_quyền">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_người_đại_diện_theo_pháp_luật" target="ACTION_đăng_ký">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="ACTION_đăng_ký">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="CONDITION_khi">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="CONDITION_khi" target="ORGANIZATION_cơ_quan">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="CONDITION_khi" target="ACTION_đăng_ký">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="CONDITION_khi" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="PERSON_ROLE_thành_viên">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="PERSON_ROLE_thành_viên">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ORGANIZATION_tổ_chức">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="ORGANIZATION_tổ_chức">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="ACTION_đăng_ký">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="ACTION_đăng_ký">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_người_đại_diện_theo_pháp_luật" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="CONDITION_nếu" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">INCLUDES</data>
+    </edge>
+    <edge source="PERCENTAGE_toàn_bộ" target="LEGAL_TERM_quyền">
+      <data key="d2">INCLUDES</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="MONETARY_100%_vốn">
+      <data key="d2">REFERENCES</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="ORGANIZATION_công_ty">
+      <data key="d2">REFERENCES</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_cơ_quan">
+      <data key="d2">AMENDS</data>
+    </edge>
+    <edge source="CONDITION_nếu" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERCENTAGE_toàn_bộ" target="LEGAL_TERM_quyền">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="CONDITION_nếu" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="ORGANIZATION_cơ_quan">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="ACTION_đăng_ký">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="PENALTY_cấm" target="ORGANIZATION_cơ_quan">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PENALTY_cấm" target="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_người_đại_diện_theo_pháp_luật" target="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_người_đại_diện_theo_pháp_luật" target="ORGANIZATION_cơ_quan">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="ORGANIZATION_chi_nhánh">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="ORGANIZATION_văn_phòng_đại_diện">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_chi_nhánh" target="CONDITION_nếu">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="CONDITION_nếu">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="ORGANIZATION_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="PERSON_ROLE_thành_viên">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="LEGAL_TERM_quyền">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="LEGAL_TERM_quyền">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="DURATION_trong_thời_hạn_06_tháng">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="DURATION_trong_thời_hạn_06_tháng">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="ACTION_đăng_ký">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="DURATION_trong_thời_hạn_06_tháng" target="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="DURATION_trong_thời_hạn_06_tháng" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="LEGAL_TERM_quyền">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp" target="LEGAL_TERM_quyền">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp" target="ORGANIZATION_cơ_quan">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_nghĩa_vụ" target="MONETARY_100%_vốn">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="MONETARY_100%_vốn">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="MONETARY_100%_vốn">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="ORGANIZATION_công_ty">
+      <data key="d2">REQUIRES</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="PERSON_ROLE_thành_viên">
+      <data key="d2">REQUIRES</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="MONETARY_100%_vốn">
+      <data key="d2">REQUIRES</data>
+    </edge>
+    <edge source="ORGANIZATION_tổ_chức" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ORGANIZATION_chi_nhánh">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ORGANIZATION_văn_phòng_đại_diện">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_người_đại_diện_theo_pháp_luật" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="LEGAL_TERM_biên_bản">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="DURATION_12_tháng" target="ORGANIZATION_cơ_quan">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="MONETARY_100%_vốn" target="LEGAL_TERM_quyền">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="MONETARY_100%_vốn" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="MONETARY_100%_vốn" target="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="LEGAL_TERM_quyền">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="MONETARY_100%_vốn">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ACTION_đăng_ký" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="PERCENTAGE_toàn_bộ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="CONDITION_trường_hợp">
+      <data key="d2">AMENDS</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="MONETARY_100%_vốn">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="CONDITION_nếu" target="ACTION_đăng_ký">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="CONDITION_nếu" target="ACTION_đăng_ký">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="LEGAL_TERM_quyền">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="LEGAL_TERM_quyền">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="PERSON_ROLE_người_đại_diện_theo_pháp_luật" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_cơ_quan" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="PERCENTAGE_toàn_bộ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">REFERENCES</data>
+    </edge>
+    <edge source="LEGAL_TERM_biên_bản" target="CONDITION_nếu">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="PERSON_ROLE_chủ_tịch_công_ty">
+      <data key="d2">INCLUDES</data>
+    </edge>
+    <edge source="PERSON_ROLE_thành_viên" target="ORGANIZATION_công_ty">
+      <data key="d2">REFERENCES</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="LEGAL_TERM_nghĩa_vụ">
+      <data key="d2">REFERENCES</data>
+    </edge>
+    <edge source="LEGAL_TERM_điều_lệ" target="MONETARY_100%_vốn">
+      <data key="d2">AMENDS</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_chi_nhánh">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_biên_bản" target="CONDITION_nếu">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_biên_bản" target="CONDITION_nếu">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="PENALTY_cấm" target="PERSON_ROLE_thành_viên">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PENALTY_cấm" target="PERSON_ROLE_chủ_tịch_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PENALTY_cấm" target="ORGANIZATION_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_chủ_tịch_công_ty" target="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="PERSON_ROLE_người_đại_diện_theo_pháp_luật" target="ORGANIZATION_công_ty">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="PERSON_ROLE_người_đại_diện_theo_pháp_luật">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ACTION_đăng_ký">
+      <data key="d2">DEFINED_AS</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_công_ty">
+      <data key="d2">APPLIES_TO</data>
+    </edge>
+    <edge source="LEGAL_TERM_quyền" target="ORGANIZATION_công_ty">
+      <data key="d2">APPLIES_TO</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_chi_nhánh">
+      <data key="d2">APPLIES_TO</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_văn_phòng_đại_diện">
+      <data key="d2">APPLIES_TO</data>
+    </edge>
+    <edge source="ORGANIZATION_văn_phòng_đại_diện" target="LEGAL_TERM_biên_bản">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_biên_bản" target="PERSON_ROLE_thành_viên">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_biên_bản" target="PERSON_ROLE_chủ_tịch_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_biên_bản" target="ORGANIZATION_công_ty">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_giấy_chứng_nhận_đăng_ký_doanh_nghiệp" target="PERSON_ROLE_thành_viên">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="LEGAL_TERM_nghĩa_vụ" target="LEGAL_TERM_điều_lệ">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_chi_nhánh" target="LEGAL_TERM_biên_bản">
+      <data key="d2">AUTHORIZED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_công_ty">
+      <data key="d2">PERFORMED_BY</data>
+    </edge>
+    <edge source="ORGANIZATION_công_ty" target="ORGANIZATION_công_ty">
+      <data key="d2">REFERENCES</data>
+    </edge>
+    <edge source="ORGANIZATION_doanh_nghiệp" target="ORGANIZATION_doanh_nghiệp">
+      <data key="d2">REFERENCES</data>
+    </edge>
+  </graph>
+</graphml>
