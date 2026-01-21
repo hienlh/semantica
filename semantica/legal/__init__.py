@@ -68,6 +68,19 @@ from .abbreviation_extractor import (
 )
 from .models import LegalAbbreviationModel
 
+# Phase 04: KG Pipeline
+from .entity_types import LEGAL_ENTITY_TYPES, LEGAL_NER_PROMPT_VI, LEGAL_ABBREVIATIONS
+from .relation_types import (
+    LEGAL_RELATION_TYPES,
+    LEGAL_RELATION_TYPES_GENERIC,
+    LEGAL_RELATION_TYPES_DOMAIN,
+    LEGAL_RELATION_TRIGGERS,
+    LEGAL_RELATION_PROMPT_VI,
+    LEGAL_RELATION_FREE_PROMPT_VI,
+    LEGAL_RELATION_PATTERNS,
+)
+from .kg_pipeline import VietnameseLegalPipeline
+
 __all__ = [
     # Phase 00: Scraper data classes
     "LegalDocument",
@@ -119,4 +132,16 @@ __all__ = [
     "expand_search_terms",
     "get_full_form",
     "KNOWN_LEGAL_ABBREVIATIONS",
+    # Phase 04: KG Pipeline
+    "VietnameseLegalPipeline",
+    "LEGAL_ENTITY_TYPES",
+    "LEGAL_RELATION_TYPES",
+    "LEGAL_RELATION_TYPES_GENERIC",
+    "LEGAL_RELATION_TYPES_DOMAIN",
+    "LEGAL_RELATION_TRIGGERS",
+    "LEGAL_NER_PROMPT_VI",
+    "LEGAL_RELATION_PROMPT_VI",
+    "LEGAL_RELATION_FREE_PROMPT_VI",
+    "LEGAL_RELATION_PATTERNS",
+    "LEGAL_ABBREVIATIONS",
 ]

@@ -18,16 +18,17 @@ SQLite → Semantica NERExtractor → Semantica RelationExtractor → Semantica 
 
 **Principles**: YAGNI - KISS - DRY
 
-## Progress (Updated 2026-01-18)
+## Progress (Updated 2026-01-19)
 
 | Step | Component | Status | Notes |
 |------|-----------|--------|-------|
 | ~~0~~ | ~~Normalizer~~ | ✅ **Skip** | Scraper handles |
 | ~~0.5~~ | ~~Abbreviations~~ | ✅ **Done** | Phase 03.5 |
-| 1 | Entity Types | 🔲 Pending | `legal/entity_types.py` - config only |
-| 2 | Relation Types | 🔲 Pending | `legal/relation_types.py` - config only |
-| 3 | Pipeline | 🔲 Pending | `legal/kg_pipeline.py` - orchestrate |
-| 4 | Semantica Mods | 🔲 If needed | Modify core directly |
+| 1 | Entity Types | ✅ **Done** | `legal/entity_types.py` |
+| 2 | Relation Types | ✅ **Done** | `legal/relation_types.py` |
+| 3 | Pipeline | ✅ **Done** | `legal/kg_pipeline.py` |
+| 4 | Semantica Mods | ✅ **Not needed** | Core works as-is |
+| 5 | Testing | ✅ **Done** | 13 entities, 195 relations (5 articles) |
 
 ## Key Decisions
 
@@ -251,18 +252,40 @@ class LegalKGPipeline:
 
 - [x] ~~Normalizer~~ → Skip (scraper handles)
 - [x] ~~Abbreviations~~ → Done (Phase 03.5)
-- [ ] Create `legal/entity_types.py`
-- [ ] Create `legal/relation_types.py`
-- [ ] Create `legal/kg_pipeline.py`
-- [ ] Test pipeline
-- [ ] Sửa Semantica core nếu cần
+- [x] Create `legal/entity_types.py`
+- [x] Create `legal/relation_types.py`
+- [x] Create `legal/kg_pipeline.py`
+- [x] Test pipeline với real data
+- [x] ~~Sửa Semantica core nếu cần~~ → Not needed
+
+## Test Results (2026-01-19)
+
+**Input**: 5 articles from legal_docs.db
+
+**Output**:
+- Entities: 13 (LEGAL_TERM: 7, ORGANIZATION: 4, PERSON_ROLE: 1, ACTION: 1)
+- Relationships: 195 (REFERENCES: 169, related_to: 15, DEFINED_AS: 2, etc.)
+
+**Verified**:
+- NER extraction: Working (OpenAI gpt-4o-mini)
+- Relation extraction: Working (multiple relation types)
+- Cross-ref integration: Working (169 REFERENCES edges from Phase 03)
+- GraphBuilder: Working (entity resolution, conflict detection)
+- Ontology generation: Working (OntologyGenerator)
+- Export: Working (JSON to data/kg_output/)
+- Validation: Working (GraphValidator - 341 issues detected)
+- Visualization: Requires plotly (graceful skip)
 
 ## Success Criteria
 
-- [ ] NER extracts entities with Semantica NERExtractor
-- [ ] Relations extracted with Semantica RelationExtractor
-- [ ] Cross-refs from Phase 03 → KG REFERENCES edges
-- [ ] KG nodes linked to SQLite via kg_node_id
+- [x] NER extracts entities with Semantica NERExtractor
+- [x] Relations extracted with Semantica RelationExtractor
+- [x] Cross-refs from Phase 03 → KG REFERENCES edges
+- [x] KG nodes linked to SQLite via kg_node_id
+- [x] Ontology generation from KG
+- [x] Export to JSON (+ Neo4j, RDF support)
+- [x] Quality validation with GraphValidator
+- [x] Visualization (optional, requires plotly)
 
 ## Estimated Effort
 

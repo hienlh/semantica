@@ -6,7 +6,7 @@ between entities in text documents using multiple extraction methods, from
 pattern matching to advanced LLM-based extraction.
 
 Supported Methods:
-    - "pattern": Pattern-based extraction using common relation patterns (default)
+    - "pattern": Pattern-based extraction using custom regex patterns (default)
     - "regex": Advanced regex-based relation extraction
     - "cooccurrence": Co-occurrence based relation detection (proximity-based)
     - "dependency": Dependency parsing-based extraction using spaCy
@@ -23,21 +23,17 @@ Algorithms Used:
     - Weighted Confidence Scoring:
         * Formula: Score = (0.5 * Method_Confidence) + (0.5 * Type_Similarity_Score)
         * Method_Confidence: Confidence score from the extraction algorithm
-        * Type_Similarity_Score: Semantic match with user-provided relation types (Exact=1.0, Synonym=0.95, Embedding=Cosine_Sim)
-    - Hybrid Similarity Matching: Exact -> Synonym -> Substring -> Semantic Embedding (Batch Optimized)
+        * Type_Similarity_Score: Semantic match with user-provided relation types
+    - Hybrid Similarity Matching: Exact -> Synonym -> Substring -> Semantic Embedding
     - Last Resort Fallback: Adjacency-based heuristic when all other methods fail
 
 Key Features:
-    - Multiple extraction methods:
-        * Pattern-based: Pattern matching for common relations (default)
-        * Regex-based: Advanced regex relation extraction
-        * Co-occurrence: Proximity-based relation detection
-        * Dependency: Dependency parsing-based extraction
-        * HuggingFace: Custom HuggingFace relation models
-        * LLM-based: LLM-powered relation extraction
+    - Custom relation patterns: Pass your own regex patterns for any language
+    - Custom fallback predicate: Configure the fallback relation type
+    - Multiple extraction methods (pattern, regex, cooccurrence, dependency, etc.)
     - Fallback chain support: Try methods in order until one succeeds
-    - Robust Fallbacks: Prevents empty results via Primary -> Pattern -> Last Resort chain
-    - Multiple relation types (founded_by, located_in, works_for, born_in, etc.)
+    - Configurable fallbacks: Disable co-occurrence or last resort fallbacks
+    - Robust Fallbacks: Prevents empty results via Primary -> Pattern -> Last Resort
     - Relation classification and grouping
     - Relation validation and consistency checking
     - Context extraction for each relation
@@ -49,18 +45,38 @@ Main Classes:
 
 Example Usage:
     >>> from semantica.semantic_extract import RelationExtractor
-    >>> # Using pattern method (default)
+    >>>
+    >>> # Using default English patterns
     >>> extractor = RelationExtractor(method="pattern")
     >>> relations = extractor.extract_relations("Apple was founded by Steve Jobs.", entities)
-    >>> 
+    >>>
+    >>> # Using custom Vietnamese patterns
+    >>> VI_PATTERNS = {
+    ...     "YÊU_CẦU": [r"(.+?)\\s+(?:phải có|cần có)\\s+(.+)"],
+    ...     "ĐỊNH_NGHĨA_LÀ": [r"(.+?)\\s+(?:là|được định nghĩa là)\\s+(.+)"],
+    ... }
+    >>> extractor = RelationExtractor(
+    ...     method="pattern",
+    ...     relation_patterns=VI_PATTERNS,
+    ...     fallback_predicate="LIÊN_QUAN",
+    ... )
+    >>> relations = extractor.extract_relations("Công ty phải có ít nhất 2 thành viên.", entities)
+    >>>
+    >>> # LLM-based extraction with custom fallback, disable noisy co-occurrence
+    >>> extractor = RelationExtractor(
+    ...     method="llm",
+    ...     provider="gemini",
+    ...     llm_model="gemini-2.0-flash",
+    ...     fallback_predicate="LIÊN_QUAN",
+    ...     disable_cooccurrence_fallback=True,
+    ...     disable_last_resort_fallback=True,
+    ... )
+    >>> relations = extractor.extract_relations(text, entities)
+    >>>
     >>> # Using dependency parsing
     >>> extractor = RelationExtractor(method="dependency", model="en_core_web_sm")
     >>> relations = extractor.extract_relations("Apple was founded by Steve Jobs.", entities)
-    >>> 
-    >>> # Using LLM method
-    >>> extractor = RelationExtractor(method="llm", provider="openai", llm_model="gpt-4")
-    >>> relations = extractor.extract_relations("Apple was founded by Steve Jobs.", entities)
-    >>> 
+    >>>
     >>> # Using fallback chain
     >>> extractor = RelationExtractor(method=["llm", "dependency", "pattern"])
     >>> relations = extractor.extract_relations("Apple was founded by Steve Jobs.", entities)
@@ -93,10 +109,36 @@ class Relation:
 
 class RelationExtractor:
     """Relation extractor for entity relationships."""
+
+    # Default English relation patterns (used when no custom patterns provided)
+    DEFAULT_RELATION_PATTERNS = {
+        "founded_by": [
+            r"(?P<subject>[\w\.\s]+?)\s+(?:was\s+)?founded\s+by\s+(?P<object>[\w\.]+(?:\s+[\w\.]+)*)",
+            r"(?P<object>[\w\.]+(?:\s+[\w\.]+)*)\s+founded\s+(?P<subject>[\w\.]+(?:\s+[\w\.]+)*)",
+        ],
+        "located_in": [
+            r"(?P<subject>[\w\.\s]+?)\s+is\s+located\s+in\s+(?P<object>[\w\.]+(?:\s+[\w\.]+)*)",
+            r"(?P<subject>[\w\.\s]+?)\s+in\s+(?P<object>[\w\.]+(?:\s+[\w\.]+)*)",
+        ],
+        "works_for": [
+            r"(?P<subject>[\w\.\s]+?)\s+works?\s+for\s+(?P<object>[\w\.]+(?:\s+[\w\.]+)*)",
+            r"(?P<subject>[\w\.\s]+?)\s+is\s+an?\s+employee\s+of\s+(?P<object>[\w\.]+(?:\s+[\w\.]+)*)",
+        ],
+        "born_in": [
+            r"(?P<subject>[\w\.\s]+?)\s+was\s+born\s+in\s+(?P<object>[\w\.]+(?:\s+[\w\.]+)*)",
+            r"(?P<subject>[\w\.\s]+?)\s+born\s+in\s+(?P<object>[\w\.]+(?:\s+[\w\.]+)*)",
+        ],
+    }
+
+    # Default fallback predicate
+    DEFAULT_FALLBACK_PREDICATE = "related_to"
+
     def __init__(
         self,
         method: Union[str, List[str]] = "pattern",
         relation_types: Optional[List[str]] = None,
+        relation_patterns: Optional[Dict[str, List[str]]] = None,
+        fallback_predicate: Optional[str] = None,
         bidirectional: bool = False,
         confidence_threshold: float = 0.6,
         max_distance: int = 50,
@@ -115,6 +157,12 @@ class RelationExtractor:
                 - "llm": LLM-based extraction
                 - List of methods for fallback chain
             relation_types: Specific relation types to extract (e.g., ["founded", "works_at"])
+            relation_patterns: Custom regex patterns for pattern-based extraction.
+                Format: {"RELATION_TYPE": [r"pattern1", r"pattern2", ...]}
+                Each pattern must have named groups "subject" and "object".
+                If None, uses DEFAULT_RELATION_PATTERNS.
+            fallback_predicate: Predicate to use for co-occurrence and last resort fallback.
+                Default: "related_to". For Vietnamese, use "LIÊN_QUAN".
             bidirectional: Whether to extract bidirectional relations
             confidence_threshold: Minimum confidence score (0.0-1.0)
             max_distance: Maximum token distance between entities
@@ -125,6 +173,8 @@ class RelationExtractor:
                 - llm_model: LLM model name
                 - device: Device for HuggingFace models
                 - validate: Enable validation (default: False)
+                - disable_cooccurrence_fallback: Disable co-occurrence fallback (default: False)
+                - disable_last_resort_fallback: Disable last resort fallback (default: False)
         """
         self.logger = get_logger("relation_extractor")
         self.config = config
@@ -140,35 +190,23 @@ class RelationExtractor:
         self.max_distance = max_distance
         self.verbose = config.get("verbose", False)
 
+        # Fallback configuration
+        self.disable_cooccurrence_fallback = config.get("disable_cooccurrence_fallback", False)
+        self.disable_last_resort_fallback = config.get("disable_last_resort_fallback", False)
+
         # Method configuration
         self.method = method if isinstance(method, list) else [method]
         self.min_confidence = config.get("min_confidence", confidence_threshold)
         self.validate = config.get("validate", False)
 
-        # Common relation patterns
-        # Entity pattern allowing for dots and spaces (e.g., "Apple Inc.", "New York")
-        ent_pat = r"[\w\.]+(?:\s+[\w\.]+)*"
-        
-        self.relation_patterns = {
-            "founded_by": [
-                # Subject founded by Object
-                fr"(?P<subject>[\w\.\s]+?)\s+(?:was\s+)?founded\s+by\s+(?P<object>{ent_pat})",
-                # Object founded Subject
-                fr"(?P<object>{ent_pat})\s+founded\s+(?P<subject>{ent_pat})",
-            ],
-            "located_in": [
-                fr"(?P<subject>[\w\.\s]+?)\s+is\s+located\s+in\s+(?P<object>{ent_pat})",
-                fr"(?P<subject>[\w\.\s]+?)\s+in\s+(?P<object>{ent_pat})",
-            ],
-            "works_for": [
-                fr"(?P<subject>[\w\.\s]+?)\s+works?\s+for\s+(?P<object>{ent_pat})",
-                fr"(?P<subject>[\w\.\s]+?)\s+is\s+an?\s+employee\s+of\s+(?P<object>{ent_pat})",
-            ],
-            "born_in": [
-                fr"(?P<subject>[\w\.\s]+?)\s+was\s+born\s+in\s+(?P<object>{ent_pat})",
-                fr"(?P<subject>[\w\.\s]+?)\s+born\s+in\s+(?P<object>{ent_pat})",
-            ],
-        }
+        # Use custom patterns if provided, otherwise use defaults
+        self.relation_patterns = (
+            relation_patterns.copy() if relation_patterns
+            else self.DEFAULT_RELATION_PATTERNS.copy()
+        )
+
+        # Use custom fallback predicate if provided, otherwise use default
+        self._fallback_predicate = fallback_predicate or self.DEFAULT_FALLBACK_PREDICATE
 
 
     def extract(
@@ -493,29 +531,39 @@ class RelationExtractor:
             raise
 
     def _extract_last_resort_relations(self, text: str, entities: List[Entity]) -> List[Relation]:
-        """Last resort relation extraction based on simple adjacency."""
+        """
+        Last resort relation extraction based on simple adjacency.
+
+        Uses language-appropriate fallback predicate:
+        - Vietnamese: "LIÊN_QUAN"
+        - English: "related_to"
+        """
+        # Skip if disabled
+        if self.disable_last_resort_fallback:
+            return []
+
         relations = []
         # Connect adjacent entities
         for i in range(len(entities) - 1):
             e1 = entities[i]
             e2 = entities[i+1]
-            
+
             # Create a weak relation
             start_idx = min(e1.end_char, e2.start_char)
             end_idx = max(e1.end_char, e2.start_char)
             # Ensure context isn't too large or invalid
             if start_idx < 0: start_idx = 0
             if end_idx > len(text): end_idx = len(text)
-            
+
             # Expand context a bit
             ctx_start = max(0, start_idx - 20)
             ctx_end = min(len(text), end_idx + 20)
-            
+
             context = text[ctx_start:ctx_end]
-            
+
             rel = Relation(
                 subject=e1,
-                predicate="related_to",
+                predicate=self._fallback_predicate,
                 object=e2,
                 confidence=0.3,
                 context=context,
@@ -527,64 +575,86 @@ class RelationExtractor:
     def _extract_with_patterns(
         self, text: str, entities: List[Entity]
     ) -> List[Relation]:
-        """Extract relations using pattern matching."""
+        """
+        Extract relations using pattern matching.
+
+        Uses language-specific patterns (Vietnamese or English).
+        Co-occurrence fallback can be disabled via config.
+        """
         from .methods import match_entity
         relations = []
 
         # Check each relation pattern
         for relation_type, patterns in self.relation_patterns.items():
             for pattern in patterns:
-                for match in re.finditer(pattern, text, re.IGNORECASE):
-                    subject_text = match.group("subject").strip()
-                    object_text = match.group("object").strip()
+                try:
+                    for match in re.finditer(pattern, text, re.IGNORECASE):
+                        # Safely extract subject and object
+                        try:
+                            subject_text = match.group("subject").strip()
+                        except (IndexError, AttributeError):
+                            subject_text = None
 
-                    subject_entity = match_entity(subject_text, entities)
-                    object_entity = match_entity(object_text, entities)
+                        try:
+                            object_text = match.group("object").strip()
+                        except (IndexError, AttributeError):
+                            object_text = None
 
-                    if subject_entity and object_entity:
-                        # Get context around the match
-                        start = max(0, match.start() - 50)
-                        end = min(len(text), match.end() + 50)
-                        context = text[start:end]
+                        if not subject_text or not object_text:
+                            continue
+
+                        subject_entity = match_entity(subject_text, entities)
+                        object_entity = match_entity(object_text, entities)
+
+                        if subject_entity and object_entity:
+                            # Get context around the match
+                            start = max(0, match.start() - 50)
+                            end = min(len(text), match.end() + 50)
+                            context = text[start:end]
+
+                            relations.append(
+                                Relation(
+                                    subject=subject_entity,
+                                    predicate=relation_type,
+                                    object=object_entity,
+                                    confidence=0.7,  # Pattern-based confidence
+                                    context=context,
+                                    metadata={
+                                        "extraction_method": "pattern",
+                                        "pattern": pattern,
+                                    },
+                                )
+                            )
+                except re.error as e:
+                    self.logger.warning(f"Invalid regex pattern for {relation_type}: {e}")
+                    continue
+
+        # Co-occurrence based relations (entities close to each other)
+        # Skip if disabled - co-occurrence creates many generic relations
+        if not self.disable_cooccurrence_fallback:
+            for i, entity1 in enumerate(entities):
+                for entity2 in entities[i + 1 :]:
+                    # Check if entities are close in text
+                    distance = abs(entity1.end_char - entity2.start_char)
+                    if distance < 100:  # Within 100 characters
+                        # Simple relation based on proximity
+                        start = min(entity1.start_char, entity2.start_char)
+                        end = max(entity1.end_char, entity2.end_char)
+                        context = text[max(0, start - 30) : min(len(text), end + 30)]
 
                         relations.append(
                             Relation(
-                                subject=subject_entity,
-                                predicate=relation_type,
-                                object=object_entity,
-                                confidence=0.7,  # Pattern-based confidence
+                                subject=entity1,
+                                predicate=self._fallback_predicate,
+                                object=entity2,
+                                confidence=0.5,  # Lower confidence for co-occurrence
                                 context=context,
                                 metadata={
-                                    "extraction_method": "pattern",
-                                    "pattern": pattern,
+                                    "extraction_method": "co_occurrence",
+                                    "distance": distance,
                                 },
                             )
                         )
-
-        # Co-occurrence based relations (entities close to each other)
-        for i, entity1 in enumerate(entities):
-            for entity2 in entities[i + 1 :]:
-                # Check if entities are close in text
-                distance = abs(entity1.end_char - entity2.start_char)
-                if distance < 100:  # Within 100 characters
-                    # Simple relation based on proximity
-                    start = min(entity1.start_char, entity2.start_char)
-                    end = max(entity1.end_char, entity2.end_char)
-                    context = text[max(0, start - 30) : min(len(text), end + 30)]
-
-                    relations.append(
-                        Relation(
-                            subject=entity1,
-                            predicate="related_to",
-                            object=entity2,
-                            confidence=0.5,  # Lower confidence for co-occurrence
-                            context=context,
-                            metadata={
-                                "extraction_method": "co_occurrence",
-                                "distance": distance,
-                            },
-                        )
-                    )
 
         return relations
 
