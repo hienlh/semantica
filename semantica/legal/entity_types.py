@@ -47,6 +47,7 @@ Trả về JSON array với format:
 
 # Known abbreviations for context (from Phase 03.5)
 LEGAL_ABBREVIATIONS = {
+    # Organization roles
     "HĐQT": "Hội đồng quản trị",
     "HĐTV": "Hội đồng thành viên",
     "ĐHĐCĐ": "Đại hội đồng cổ đông",
@@ -54,10 +55,30 @@ LEGAL_ABBREVIATIONS = {
     "GĐ": "Giám đốc",
     "BKS": "Ban kiểm soát",
     "KSV": "Kiểm soát viên",
+    "CT": "Chủ tịch",
+    "PCT": "Phó Chủ tịch",
+    # Company types
     "CTCP": "Công ty cổ phần",
     "TNHH": "Trách nhiệm hữu hạn",
     "DNTN": "Doanh nghiệp tư nhân",
     "HTX": "Hợp tác xã",
+    "DN": "Doanh nghiệp",
+    # Registration/Legal terms
     "GCNĐKKD": "Giấy chứng nhận đăng ký kinh doanh",
     "GCNĐKDN": "Giấy chứng nhận đăng ký doanh nghiệp",
+    "ĐKKD": "Đăng ký kinh doanh",
+    "ĐKDN": "Đăng ký doanh nghiệp",
+    "VĐL": "Vốn điều lệ",
+    # Government agencies
+    "UBND": "Ủy ban nhân dân",
+    "HĐND": "Hội đồng nhân dân",
+    "CP": "Chính phủ",
+    "QH": "Quốc hội",
+    "BTC": "Bộ Tài chính",
+    "BKHĐT": "Bộ Kế hoạch và Đầu tư",
+    # Legal documents
+    "NĐ": "Nghị định",
+    "TT": "Thông tư",
+    "QĐ": "Quyết định",
+    "NQ": "Nghị quyết",
 }

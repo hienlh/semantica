@@ -187,6 +187,163 @@ Ví dụ với entities: ["Công ty TNHH", "ít nhất 2 thành viên", "Doanh n
 """
 
 # =============================================================================
+# VIETNAMESE COT PROMPT FOR RELATION EXTRACTION (Chain-of-Thought)
+# =============================================================================
+LEGAL_RELATION_COT_PROMPT_VI = """Bạn là chuyên gia trích xuất quan hệ ngữ nghĩa từ văn bản pháp luật Việt Nam.
+
+**RÀNG BUỘC QUAN TRỌNG NHẤT:**
+- Subject và Object PHẢI là 2 thực thể KHÁC NHAU
+- Quan hệ mà subject = object là KHÔNG HỢP LỆ → KHÔNG được trích xuất
+- Loại quan hệ PHẢI viết HOA (VD: CÓ_QUYỀN, không phải có_quyền)
+
+## BƯỚC 1: Xác định thực thể
+Liệt kê các thực thể trong văn bản và vai trò của chúng:
+- Chủ thể (ORG, PERSON_ROLE): ai/cái gì thực hiện hành động?
+- Đối tượng (LEGAL_TERM, ACTION): hành động/thuộc tính gì?
+
+## BƯỚC 2: Phân tích ngữ cảnh
+Với mỗi cặp thực thể KHÁC NHAU, xác định:
+- Có trigger word không? (phải, có quyền, được phép, bị cấm...)
+- Có phủ định không? ("không được" = NGHIÊM_CẤM, không phải CÓ_QUYỀN)
+
+## BƯỚC 3: Xác định loại quan hệ
+Chọn loại quan hệ từ danh sách (PHẢI viết HOA):
+
+| Trigger words | → Relation type |
+|---------------|-----------------|
+| "phải có", "cần có", "yêu cầu" | YÊU_CẦU |
+| "bị phạt", "bị xử phạt" | BỊ_PHẠT |
+| "áp dụng cho", "áp dụng đối với" | ÁP_DỤNG_CHO |
+| "là", "được hiểu là", "được định nghĩa là" | ĐỊNH_NGHĨA_LÀ |
+| "theo", "căn cứ", "quy định tại" | THAM_CHIẾU |
+| "bao gồm", "gồm có", "chứa" | BAO_GỒM |
+| "có quyền", "được quyền", "được phép" | CÓ_QUYỀN |
+| "có nghĩa vụ", "phải", "bắt buộc" | CÓ_NGHĨA_VỤ |
+| "chịu trách nhiệm", "trách nhiệm của" | CHỊU_TRÁCH_NHIỆM |
+| "nghiêm cấm", "cấm", "không được" | NGHIÊM_CẤM |
+
+## BƯỚC 4: Kiểm tra hợp lệ (BẮT BUỘC)
+Với mỗi quan hệ, kiểm tra:
+✓ Subject và Object là 2 thực thể KHÁC NHAU?
+✓ Loại quan hệ viết HOA đúng cách?
+✓ Subject/Object copy CHÍNH XÁC từ danh sách entities?
+
+---
+
+## VÍ DỤ ĐÚNG:
+
+**Văn bản:** "Công ty cổ phần phải có Hội đồng quản trị. HĐQT có quyền quyết định chiến lược phát triển."
+**Entities:** ["Công ty cổ phần", "Hội đồng quản trị", "HĐQT", "chiến lược phát triển"]
+
+**Phân tích:**
+1. "phải có" giữa "Công ty cổ phần" và "Hội đồng quản trị" → YÊU_CẦU
+2. "có quyền" giữa "HĐQT" và "chiến lược phát triển" → CÓ_QUYỀN
+
+**Kết quả:**
+[
+  {{"subject": "Công ty cổ phần", "predicate": "YÊU_CẦU", "object": "Hội đồng quản trị", "confidence": 0.95}},
+  {{"subject": "HĐQT", "predicate": "CÓ_QUYỀN", "object": "chiến lược phát triển", "confidence": 0.9}}
+]
+
+---
+
+**Văn bản:** "Doanh nghiệp là tổ chức có tên riêng, có tài sản, có trụ sở giao dịch."
+**Entities:** ["Doanh nghiệp", "tổ chức có tên riêng", "tài sản", "trụ sở giao dịch"]
+
+**Phân tích:**
+1. "là" giữa "Doanh nghiệp" và "tổ chức có tên riêng" → ĐỊNH_NGHĨA_LÀ
+2. "có" giữa "Doanh nghiệp" và "tài sản" → YÊU_CẦU (ownership requirement)
+3. "có" giữa "Doanh nghiệp" và "trụ sở giao dịch" → YÊU_CẦU
+
+**Kết quả:**
+[
+  {{"subject": "Doanh nghiệp", "predicate": "ĐỊNH_NGHĨA_LÀ", "object": "tổ chức có tên riêng", "confidence": 0.95}},
+  {{"subject": "Doanh nghiệp", "predicate": "YÊU_CẦU", "object": "tài sản", "confidence": 0.85}},
+  {{"subject": "Doanh nghiệp", "predicate": "YÊU_CẦU", "object": "trụ sở giao dịch", "confidence": 0.85}}
+]
+
+---
+
+**Văn bản:** "Giám đốc chịu trách nhiệm về hoạt động kinh doanh. Giám đốc có quyền tuyển dụng lao động."
+**Entities:** ["Giám đốc", "hoạt động kinh doanh", "tuyển dụng lao động"]
+
+**Phân tích:**
+1. "chịu trách nhiệm về" giữa "Giám đốc" và "hoạt động kinh doanh" → CHỊU_TRÁCH_NHIỆM
+2. "có quyền" giữa "Giám đốc" và "tuyển dụng lao động" → CÓ_QUYỀN
+
+**Kết quả:**
+[
+  {{"subject": "Giám đốc", "predicate": "CHỊU_TRÁCH_NHIỆM", "object": "hoạt động kinh doanh", "confidence": 0.95}},
+  {{"subject": "Giám đốc", "predicate": "CÓ_QUYỀN", "object": "tuyển dụng lao động", "confidence": 0.9}}
+]
+
+---
+
+**Văn bản:** "Thành viên không được rút vốn đã góp ra khỏi công ty dưới mọi hình thức."
+**Entities:** ["Thành viên", "rút vốn đã góp", "công ty"]
+
+**Phân tích:**
+1. "không được" là phủ định → NGHIÊM_CẤM (không phải CÓ_QUYỀN!)
+2. Subject: "Thành viên", Object: "rút vốn đã góp"
+
+**Kết quả:**
+[
+  {{"subject": "Thành viên", "predicate": "NGHIÊM_CẤM", "object": "rút vốn đã góp", "confidence": 0.95}}
+]
+
+---
+
+**Văn bản:** "Điều 24 quy định về điều kiện đối với Giám đốc theo quy định tại Điều 64 Luật này."
+**Entities:** ["Điều 24", "điều kiện đối với Giám đốc", "Điều 64"]
+
+**Phân tích:**
+1. "quy định về" giữa "Điều 24" và "điều kiện đối với Giám đốc" → QUY_ĐỊNH_VỀ
+2. "theo quy định tại" giữa "Điều 24" và "Điều 64" → THAM_CHIẾU
+
+**Kết quả:**
+[
+  {{"subject": "Điều 24", "predicate": "QUY_ĐỊNH_VỀ", "object": "điều kiện đối với Giám đốc", "confidence": 0.9}},
+  {{"subject": "Điều 24", "predicate": "THAM_CHIẾU", "object": "Điều 64", "confidence": 0.95}}
+]
+
+---
+
+## VÍ DỤ SAI (KHÔNG ĐƯỢC LÀM):
+
+❌ SAI - Self-reference:
+{{"subject": "Đăng ký doanh nghiệp", "predicate": "BAO_GỒM", "object": "Đăng ký doanh nghiệp"}}
+→ Subject = Object là KHÔNG HỢP LỆ!
+
+❌ SAI - Bỏ lỡ phủ định:
+Văn bản: "Thành viên không được rút vốn"
+{{"subject": "Thành viên", "predicate": "CÓ_QUYỀN", "object": "rút vốn"}}
+→ PHẢI là NGHIÊM_CẤM vì có "không được"!
+
+❌ SAI - Lowercase predicate:
+{{"subject": "Công ty", "predicate": "có_quyền", "object": "kinh doanh"}}
+→ PHẢI viết HOA: "CÓ_QUYỀN"
+
+---
+
+Thực thể đã trích xuất (CHỈ sử dụng text trong danh sách này):
+{entities}
+
+Văn bản:
+{text}
+
+**BƯỚC CUỐI: Tự kiểm tra trước khi trả lời:**
+1. Có quan hệ nào subject = object không? → Loại bỏ!
+2. Tất cả predicate đã viết HOA chưa?
+3. Subject/Object có copy chính xác từ entities không?
+
+Trả về JSON array:
+[{{"subject": "ENTITY_TEXT", "predicate": "LOẠI_QUAN_HỆ_VIẾT_HOA", "object": "ENTITY_TEXT_KHÁC", "confidence": 0.0-1.0}}]
+"""
+
+# Set of defined relation types for O(1) lookup
+LEGAL_RELATION_TYPES_SET = frozenset(t.upper() for t in LEGAL_RELATION_TYPES)
+
+# =============================================================================
 # RELATION PATTERNS FOR PATTERN-BASED EXTRACTION FALLBACK
 # =============================================================================
 LEGAL_RELATION_PATTERNS = {

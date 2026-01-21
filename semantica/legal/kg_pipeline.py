@@ -30,10 +30,14 @@ from .db_manager import LegalDocumentDB
 from .entity_types import LEGAL_ENTITY_TYPES, LEGAL_NER_PROMPT_VI, LEGAL_ABBREVIATIONS
 from .relation_types import (
     LEGAL_RELATION_TYPES,
+    LEGAL_RELATION_TYPES_SET,
     LEGAL_RELATION_PROMPT_VI,
     LEGAL_RELATION_FREE_PROMPT_VI,
+    LEGAL_RELATION_COT_PROMPT_VI,
     LEGAL_RELATION_PATTERNS,
 )
+from .relation_validator import RelationValidator
+from .entity_resolver import EntityResolver
 
 from ..semantic_extract.providers import create_provider
 from .models import LegalArticleModel, LegalCrossReferenceModel
@@ -123,6 +127,18 @@ class VietnameseLegalPipeline:
         self.llm_model = llm_model
         self.confidence_threshold = config.get("confidence_threshold", 0.6)
 
+        # Initialize RelationValidator for post-processing
+        self.relation_validator = RelationValidator(
+            defined_types=LEGAL_RELATION_TYPES,
+            enable_semantic_validation=config.get("enable_semantic_validation", True),
+        )
+
+        # Initialize EntityResolver for entity deduplication
+        self.entity_resolver = EntityResolver(
+            abbreviations=LEGAL_ABBREVIATIONS,
+            scope_by_document=config.get("scope_entities_by_document", True),
+        )
+
         # Initialize Semantica GraphBuilder
         # Use exact matching to avoid merging different entities with similar names
         # This preserves relationship integrity (source/dest IDs match entity IDs)
@@ -159,8 +175,8 @@ class VietnameseLegalPipeline:
         # Format entities for prompt
         entities_str = "\n".join([f"- {e.text} [{e.label}]" for e in entities])
 
-        # Use Vietnamese free extraction prompt
-        prompt = LEGAL_RELATION_FREE_PROMPT_VI.format(
+        # Use Vietnamese CoT extraction prompt (with step-by-step reasoning)
+        prompt = LEGAL_RELATION_COT_PROMPT_VI.format(
             entities=entities_str,
             text=text,
         )
@@ -201,6 +217,9 @@ class VietnameseLegalPipeline:
                     "object_text": obj,
                     "confidence": confidence,
                 })
+
+            # Validate relations (filter self-refs, normalize types, persist new types)
+            relations = self.relation_validator.validate(relations)
 
             return relations
 
@@ -341,6 +360,33 @@ class VietnameseLegalPipeline:
         # Add cross-refs (already dicts)
         relation_dicts.extend(crossref_relations)
 
+        # Validate ALL relations (filter self-refs, normalize types, persist new)
+        # Convert relation_dicts format for validator (source/target -> subject_text/object_text)
+        relations_for_validation = []
+        for r in relation_dicts:
+            relations_for_validation.append({
+                "subject_text": r.get("source", ""),
+                "predicate": r.get("type", ""),
+                "object_text": r.get("target", ""),
+                "confidence": r.get("confidence", 0.8),
+                "metadata": r.get("metadata", {}),
+            })
+
+        validated_relations = self.relation_validator.validate(relations_for_validation)
+
+        # Convert back to relation_dicts format
+        relation_dicts = []
+        for r in validated_relations:
+            relation_dicts.append({
+                "source": r["subject_text"],
+                "target": r["object_text"],
+                "type": r["predicate"],
+                "confidence": r["confidence"],
+                "metadata": r.get("metadata", {}),
+            })
+
+        self.logger.info(f"After validation: {len(relation_dicts)} relations")
+
         kg = self.builder.build(
             sources={
                 "entities": entity_dicts,
@@ -444,24 +490,35 @@ class VietnameseLegalPipeline:
         return relations
 
     def _entity_to_dict(self, entity) -> Dict[str, Any]:
-        """Convert Entity to dict for GraphBuilder."""
-        # Use slug format for entity ID: {source_id}:{slug}
-        # Example: "doc:d1:cong-ty-co-phan"
-        entity_slug = slugify_vietnamese(entity.text)
+        """Convert Entity to dict for GraphBuilder using EntityResolver."""
         source_id = entity.metadata.get("source_id", "unknown")
+        document_id = entity.metadata.get("document_id", "unknown")
+
+        # Use EntityResolver for canonical ID (handles abbreviations, dedup)
+        entity_id = self.entity_resolver.resolve(
+            entity_text=entity.text,
+            entity_type=entity.label,
+            document_id=source_id,
+        )
+
+        # Get additional metadata from resolver
+        entity_meta = self.entity_resolver.get_entity_metadata(entity.text)
 
         return {
-            "id": f"{source_id}:{entity_slug}",
+            "id": entity_id,
             "name": entity.text,
             "type": entity.label,
             "confidence": entity.confidence,
             "metadata": {
                 "source_id": source_id,
-                "document_id": entity.metadata.get("document_id"),
+                "document_id": document_id,
                 "start_char": entity.start_char,
                 "end_char": entity.end_char,
-                # Expand abbreviation if known
-                "full_form": LEGAL_ABBREVIATIONS.get(entity.text.upper()),
+                # Entity resolution metadata
+                "original_text": entity_meta["original_text"],
+                "expanded_text": entity_meta["expanded_text"],
+                "is_abbreviation": entity_meta["is_abbreviation"],
+                "full_form": entity_meta["full_form"],
             },
         }
 
